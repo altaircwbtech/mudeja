@@ -6,70 +6,89 @@ interface LogoIconProps {
 }
 
 /**
- * MovaFácil truck icon — inspired by the brand mockup.
- * Stylized truck with motion lines, friendly and modern.
+ * MovaFácil logo icon — Truck carrying a house with motion lines.
+ * Recreated from the official brand icon.
  */
 export function LogoIcon({ className, size = 24 }: LogoIconProps) {
   return (
     <svg
-      viewBox="0 0 48 48"
+      viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
       className={className}
     >
-      {/* Motion lines */}
-      <rect x="2" y="16" width="8" height="3" rx="1.5" fill="currentColor" opacity="0.5" />
-      <rect x="4" y="22" width="6" height="3" rx="1.5" fill="currentColor" opacity="0.35" />
-      <rect x="2" y="28" width="8" height="3" rx="1.5" fill="currentColor" opacity="0.5" />
+      {/* Motion/speed lines */}
+      <rect x="4" y="22" width="12" height="3.5" rx="1.75" fill="currentColor" />
+      <rect x="6" y="28" width="10" height="3.5" rx="1.75" fill="currentColor" />
+      <rect x="4" y="34" width="12" height="3.5" rx="1.75" fill="currentColor" />
 
-      {/* Truck cargo/box */}
-      <rect x="16" y="10" width="22" height="20" rx="3" fill="currentColor" />
-
-      {/* Cargo detail line */}
-      <rect x="16" y="10" width="3" height="20" rx="1.5" fill="currentColor" opacity="0.8" />
-
-      {/* Truck cab */}
+      {/* Truck cargo body — rounded rectangle */}
       <path
-        d="M38 18H43C44.6569 18 46 19.3431 46 21V28C46 29.1046 45.1046 30 44 30H38V18Z"
+        d="M20 14C20 11.7909 21.7909 10 24 10H44C46.2091 10 48 11.7909 48 14V38H20V14Z"
         fill="currentColor"
       />
 
-      {/* Cab window */}
+      {/* Truck cab */}
       <path
-        d="M39.5 19.5H42.5C43.3284 19.5 44 20.1716 44 21V24.5H39.5V19.5Z"
+        d="M48 24H55C57.2091 24 59 25.7909 59 28V38C59 39.6569 57.6569 41 56 41H48V24Z"
+        fill="currentColor"
+      />
+
+      {/* Cab windshield (cutout effect) */}
+      <path
+        d="M50 26H54C55.1046 26 56 26.8954 56 28V33H50V26Z"
+        fill="currentColor"
+        opacity="0.45"
+      />
+
+      {/* House roof — triangle */}
+      <path
+        d="M34 15L24 25H44L34 15Z"
         fill="currentColor"
         opacity="0.4"
       />
 
-      {/* Wheels */}
-      <circle cx="23" cy="33" r="4" fill="currentColor" />
-      <circle cx="23" cy="33" r="2" fill="white" opacity="0.3" />
-      <circle cx="41" cy="33" r="4" fill="currentColor" />
-      <circle cx="41" cy="33" r="2" fill="white" opacity="0.3" />
+      {/* House body */}
+      <rect x="27" y="25" width="14" height="12" fill="currentColor" opacity="0.4" />
 
-      {/* Wheel axle line */}
-      <rect x="27" y="31.5" width="10" height="3" rx="1.5" fill="currentColor" />
+      {/* House windows — 4 small squares */}
+      <rect x="29.5" y="27" width="3.5" height="3.5" rx="0.5" fill="currentColor" />
+      <rect x="35" y="27" width="3.5" height="3.5" rx="0.5" fill="currentColor" />
+      <rect x="29.5" y="32.5" width="3.5" height="3.5" rx="0.5" fill="currentColor" />
+      <rect x="35" y="32.5" width="3.5" height="3.5" rx="0.5" fill="currentColor" />
+
+      {/* Bottom bar / chassis */}
+      <rect x="16" y="40" width="44" height="3" rx="1.5" fill="currentColor" />
+
+      {/* Rear wheel */}
+      <circle cx="26" cy="46" r="6" fill="currentColor" />
+      <circle cx="26" cy="46" r="3" fill="white" opacity="0.3" />
+
+      {/* Front wheel */}
+      <circle cx="52" cy="46" r="6" fill="currentColor" />
+      <circle cx="52" cy="46" r="3" fill="white" opacity="0.3" />
     </svg>
   );
 }
 
 interface LogoProps {
   className?: string;
-  iconSize?: number;
   showText?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 /**
- * Full MovaFácil logo — icon + text
+ * Full MovaFácil logo — icon + text.
+ * The icon shows inside a rounded orange box (matching the app icon style).
  */
 export function Logo({ className, showText = true, size = "md" }: LogoProps) {
   const sizes = {
-    sm: { icon: 18, text: "text-lg", gap: "gap-2", box: "h-7 w-7 rounded-md" },
-    md: { icon: 20, text: "text-xl", gap: "gap-2.5", box: "h-9 w-9 rounded-lg" },
-    lg: { icon: 28, text: "text-3xl", gap: "gap-3", box: "h-12 w-12 rounded-xl" },
+    sm: { icon: 20, text: "text-lg", gap: "gap-2", box: "h-8 w-8 rounded-lg" },
+    md: { icon: 24, text: "text-xl", gap: "gap-2.5", box: "h-9 w-9 rounded-xl" },
+    lg: { icon: 32, text: "text-3xl", gap: "gap-3", box: "h-12 w-12 rounded-xl" },
+    xl: { icon: 48, text: "text-4xl", gap: "gap-4", box: "h-16 w-16 rounded-2xl" },
   };
 
   const s = sizes[size];
@@ -78,7 +97,7 @@ export function Logo({ className, showText = true, size = "md" }: LogoProps) {
     <div className={cn("flex items-center", s.gap, className)}>
       <div
         className={cn(
-          "flex items-center justify-center bg-primary text-primary-foreground",
+          "flex items-center justify-center bg-primary text-primary-foreground shadow-sm",
           s.box
         )}
       >
