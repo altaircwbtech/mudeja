@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Logo, LogoIcon } from "@/components/brand/Logo";
 
 export default function LandingPage() {
   return (
@@ -23,13 +24,8 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Truck className="h-5 w-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight">
-              Mova<span className="text-primary">Fácil</span>
-            </span>
+          <Link href="/">
+            <Logo size="md" />
           </Link>
           <div className="hidden items-center gap-6 md:flex">
             <Link
@@ -114,7 +110,7 @@ export default function LandingPage() {
             {/* Social proof */}
             <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-primary" />
+                <LogoIcon size={16} className="text-primary" />
                 <span>
                   <strong className="text-foreground">50+</strong> parceiros
                   verificados
@@ -304,7 +300,7 @@ export default function LandingPage() {
             <div className="absolute bottom-[-50px] left-[-30px] h-48 w-48 rounded-full bg-white/5 blur-xl" />
             <div className="relative max-w-lg">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
-                <Truck className="h-6 w-6" />
+                <LogoIcon size={28} />
               </div>
               <h2 className="mb-4 text-3xl font-bold">
                 Tem veículo? Seja um parceiro!
@@ -333,14 +329,7 @@ export default function LandingPage() {
       <footer className="border-t bg-muted/30 py-12">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Truck className="h-4 w-4" />
-              </div>
-              <span className="font-bold">
-                Mova<span className="text-primary">Fácil</span>
-              </span>
-            </div>
+            <Logo size="sm" />
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <Link href="/como-funciona" className="hover:text-foreground transition-colors">
                 Como funciona
