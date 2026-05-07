@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
   // Protected routes
   const isAppRoute =
     request.nextUrl.pathname.startsWith("/cliente") ||
-    request.nextUrl.pathname.startsWith("/prestador");
+    request.nextUrl.pathname.startsWith("/prestador") ||
+    request.nextUrl.pathname.startsWith("/onboarding");
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||

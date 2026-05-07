@@ -1,5 +1,5 @@
 -- ==========================================
--- MudeJá — Initial Database Schema
+-- MovaFácil — Initial Database Schema
 -- Migration: 00001_initial_schema
 -- ==========================================
 
