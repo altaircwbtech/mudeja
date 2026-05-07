@@ -1,12 +1,12 @@
 {
-  "name": "MudeJá - Mudanças e Fretes",
-  "short_name": "MudeJá",
-  "description": "Encontre prestadores confiáveis para mudanças, carretos e fretes locais",
+  "name": "MovaFácil - Mudanças e Fretes",
+  "short_name": "MovaFácil",
+  "description": "O app que facilita sua mudança. Motoristas flex e ajudantes de confiança perto de você.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0D9488",
-  "background_color": "#0F172A",
+  "theme_color": "#F26522",
+  "background_color": "#1E293B",
   "icons": [
     {
       "src": "/icons/icon-192.png",

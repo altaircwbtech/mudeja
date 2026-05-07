@@ -1,11 +1,12 @@
 // ============================================
-// MudeJá — Constants
+// MovaFácil — Constants
 // ============================================
 
-export const APP_NAME = "MudeJá";
+export const APP_NAME = "MovaFácil";
 export const APP_DESCRIPTION =
-  "Encontre prestadores confiáveis para mudanças, carretos e fretes locais.";
+  "O app que facilita sua mudança. Conectamos você a motoristas flex e ajudantes de confiança.";
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export const APP_TAGLINE = "Sua mudança sem dor de cabeça.";
 
 // Service types
 export const SERVICE_TYPES = {

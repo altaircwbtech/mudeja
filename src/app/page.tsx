@@ -11,6 +11,7 @@ import {
   Users,
   TrendingUp,
   MessageCircle,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,12 +23,12 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
-              M
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Truck className="h-5 w-5" />
             </div>
             <span className="text-xl font-bold tracking-tight">
-              Mude<span className="text-primary">Já</span>
+              Mova<span className="text-primary">Fácil</span>
             </span>
           </Link>
           <div className="hidden items-center gap-6 md:flex">
@@ -41,7 +42,7 @@ export default function LandingPage() {
               href="/para-prestadores"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Para prestadores
+              Seja um parceiro
             </Link>
           </div>
           <div className="flex items-center gap-3">
@@ -51,7 +52,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/cadastro">
-              <Button size="sm" className="shadow-md shadow-primary/20">
+              <Button size="sm" className="shadow-md shadow-primary/25">
                 Cadastrar grátis
               </Button>
             </Link>
@@ -61,10 +62,10 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/10" />
-        <div className="absolute top-20 right-[-20%] h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute bottom-0 left-[-10%] h-80 w-80 rounded-full bg-accent/10 blur-3xl" />
+        {/* Background — warm gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-orange-50/50" />
+        <div className="absolute top-10 right-[-15%] h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-10%] h-80 w-80 rounded-full bg-orange-100/30 blur-3xl" />
 
         <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-32">
           <div className="mx-auto max-w-3xl text-center">
@@ -77,25 +78,25 @@ export default function LandingPage() {
             </Badge>
 
             <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-              Mudanças e fretes com{" "}
-              <span className="bg-gradient-to-r from-primary to-teal-400 bg-clip-text text-transparent">
-                quem você confia
+              Sua mudança{" "}
+              <span className="bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent">
+                sem dor de cabeça
               </span>
             </h1>
 
             <p className="mb-10 text-lg text-muted-foreground md:text-xl">
-              Encontre prestadores verificados perto de você. Compare avaliações
-              reais, receba propostas e contrate com segurança.
+              Conectamos você a motoristas flex e ajudantes de confiança perto
+              de você. Compare preços, veja avaliações reais e mude tranquilo.
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link href="/cadastro">
                 <Button
                   size="lg"
-                  className="h-13 w-full gap-2 px-8 text-base font-semibold shadow-lg shadow-primary/25 sm:w-auto"
+                  className="h-13 w-full gap-2 px-8 text-base font-semibold shadow-lg shadow-primary/30 sm:w-auto"
                 >
                   <Search className="h-5 w-5" />
-                  Encontrar prestadores
+                  Buscar serviço
                 </Button>
               </Link>
               <Link href="/para-prestadores">
@@ -104,8 +105,8 @@ export default function LandingPage() {
                   size="lg"
                   className="h-13 w-full gap-2 px-8 text-base sm:w-auto"
                 >
-                  Sou prestador
-                  <ChevronRight className="h-4 w-4" />
+                  <Users className="h-5 w-5" />
+                  Seja um parceiro
                 </Button>
               </Link>
             </div>
@@ -113,14 +114,14 @@ export default function LandingPage() {
             {/* Social proof */}
             <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-primary" />
+                <Truck className="h-4 w-4 text-primary" />
                 <span>
-                  <strong className="text-foreground">50+</strong> prestadores
+                  <strong className="text-foreground">50+</strong> parceiros
                   verificados
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-yellow-500" />
+                <Star className="h-4 w-4 text-amber-500" />
                 <span>
                   <strong className="text-foreground">4.8</strong> nota média
                 </span>
@@ -141,10 +142,10 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight">
-              O que você precisa?
+              O que você precisa mover?
             </h2>
             <p className="text-muted-foreground">
-              Conectamos você ao prestador ideal para cada tipo de serviço.
+              Motoristas e ajudantes para todo tipo de mudança e frete.
             </p>
           </div>
 
@@ -152,20 +153,20 @@ export default function LandingPage() {
             {[
               {
                 icon: Truck,
-                title: "Mudança Residencial",
-                desc: "Casa, apartamento, kitnet. De poucos itens a mudanças completas.",
+                title: "Mudança Completa",
+                desc: "Casa, apartamento, kitnet. De poucos itens a mudanças completas com equipe.",
                 badge: "Mais popular",
               },
               {
                 icon: Package,
                 title: "Carreto",
-                desc: "Transporte de itens específicos: sofá, geladeira, máquina de lavar.",
+                desc: "Transporte de itens avulsos: sofá, geladeira, máquina de lavar e mais.",
                 badge: null,
               },
               {
-                icon: Truck,
-                title: "Frete",
-                desc: "Frete de mercadorias, materiais e cargas em geral.",
+                icon: Zap,
+                title: "Frete Rápido",
+                desc: "Frete de mercadorias, materiais de construção e cargas em geral.",
                 badge: null,
               },
             ].map((service) => (
@@ -174,13 +175,13 @@ export default function LandingPage() {
                 className="group relative overflow-hidden border-none bg-card shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
               >
                 <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
                     <service.icon className="h-6 w-6" />
                   </div>
                   <div className="flex items-start justify-between">
                     <h3 className="mb-2 text-lg font-semibold">{service.title}</h3>
                     {service.badge && (
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-xs shrink-0">
                         {service.badge}
                       </Badge>
                     )}
@@ -201,8 +202,7 @@ export default function LandingPage() {
               Como funciona
             </h2>
             <p className="text-muted-foreground">
-              Simples, rápido e seguro. Em 3 passos você encontra o prestador
-              ideal.
+              Simples, rápido e seguro. Em 3 passos você resolve sua mudança.
             </p>
           </div>
 
@@ -210,25 +210,29 @@ export default function LandingPage() {
             {[
               {
                 step: "1",
-                title: "Publique seu pedido",
-                desc: "Descreva o que precisa transportar, de onde e para onde. Leva menos de 2 minutos.",
+                title: "Solicite",
+                desc: "Conte o que precisa mover, de onde e para onde. Leva menos de 2 minutos.",
                 icon: MessageCircle,
               },
               {
                 step: "2",
                 title: "Receba propostas",
-                desc: "Prestadores verificados da sua região enviam propostas com preço e disponibilidade.",
+                desc: "Compare preços e avaliações de motoristas e ajudantes da sua região.",
                 icon: TrendingUp,
               },
               {
                 step: "3",
-                title: "Escolha e contrate",
-                desc: "Compare avaliações, preços e perfis. Combine os detalhes direto pelo WhatsApp.",
+                title: "Mude tranquilo",
+                desc: "Escolha o melhor profissional e combine os detalhes direto pelo WhatsApp.",
                 icon: CheckCircle2,
               },
-            ].map((item) => (
+            ].map((item, idx) => (
               <div key={item.step} className="relative text-center">
-                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                {/* Connector line between steps */}
+                {idx < 2 && (
+                  <div className="absolute top-7 left-[calc(50%+40px)] hidden h-0.5 w-[calc(100%-80px)] bg-gradient-to-r from-primary/30 to-primary/10 md:block" />
+                )}
+                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
                   <item.icon className="h-7 w-7" />
                 </div>
                 <div className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
@@ -247,10 +251,10 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-3 text-3xl font-bold tracking-tight">
-              Confiança em primeiro lugar
+              Profissionais de confiança
             </h2>
             <p className="text-muted-foreground">
-              Cada prestador passa por verificações para garantir sua segurança.
+              Cada parceiro passa por verificações para garantir sua segurança.
             </p>
           </div>
 
@@ -264,22 +268,22 @@ export default function LandingPage() {
               {
                 icon: Star,
                 title: "Avaliações reais",
-                desc: "Somente de serviços realizados",
+                desc: "De clientes que usaram o serviço",
               },
               {
-                icon: CheckCircle2,
-                title: "Perfil completo",
-                desc: "Fotos, veículo e experiência",
+                icon: Truck,
+                title: "Veículo verificado",
+                desc: "Fotos e dados do veículo",
               },
               {
                 icon: MessageCircle,
-                title: "WhatsApp verificado",
-                desc: "Contato direto e seguro",
+                title: "WhatsApp direto",
+                desc: "Contato verificado e seguro",
               },
             ].map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col items-center rounded-xl border bg-card p-6 text-center shadow-sm"
+                className="flex flex-col items-center rounded-xl border bg-card p-6 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
               >
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <item.icon className="h-5 w-5" />
@@ -295,23 +299,28 @@ export default function LandingPage() {
       {/* CTA for providers */}
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-teal-600 p-8 md:p-14 text-white">
-            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-white/5 blur-2xl" />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-orange-500 to-orange-600 p-8 md:p-14 text-white">
+            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute bottom-[-50px] left-[-30px] h-48 w-48 rounded-full bg-white/5 blur-xl" />
             <div className="relative max-w-lg">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
+                <Truck className="h-6 w-6" />
+              </div>
               <h2 className="mb-4 text-3xl font-bold">
-                É prestador de mudanças?
+                Tem veículo? Seja um parceiro!
               </h2>
-              <p className="mb-6 text-white/80">
+              <p className="mb-6 text-white/85">
                 Cadastre-se gratuitamente e receba oportunidades de trabalho na
-                sua região. Construa sua reputação e cresça seu negócio.
+                sua região. Construa sua reputação e cresça seu negócio com a
+                MovaFácil.
               </p>
               <Link href="/cadastro">
                 <Button
                   size="lg"
                   variant="secondary"
-                  className="gap-2 font-semibold"
+                  className="gap-2 font-semibold shadow-lg"
                 >
-                  Cadastrar como prestador
+                  Cadastrar como parceiro
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -324,12 +333,12 @@ export default function LandingPage() {
       <footer className="border-t bg-muted/30 py-12">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                M
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Truck className="h-4 w-4" />
               </div>
               <span className="font-bold">
-                Mude<span className="text-primary">Já</span>
+                Mova<span className="text-primary">Fácil</span>
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
@@ -337,7 +346,7 @@ export default function LandingPage() {
                 Como funciona
               </Link>
               <Link href="/para-prestadores" className="hover:text-foreground transition-colors">
-                Para prestadores
+                Seja um parceiro
               </Link>
               <Link href="/termos" className="hover:text-foreground transition-colors">
                 Termos de uso
@@ -348,7 +357,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-8 text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} MudeJá. Todos os direitos reservados.
+            © {new Date().getFullYear()} MovaFácil. Todos os direitos reservados.
           </div>
         </div>
       </footer>

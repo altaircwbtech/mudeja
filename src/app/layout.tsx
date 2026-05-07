@@ -11,29 +11,32 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "MudeJá — Mudanças, Carretos e Fretes Confiáveis",
-    template: "%s | MudeJá",
+    default: "MovaFácil — Sua mudança sem dor de cabeça",
+    template: "%s | MovaFácil",
   },
   description:
-    "Encontre prestadores verificados para mudanças, carretos e fretes locais. Avaliações reais, preços justos e profissionais de confiança perto de você.",
+    "O app que facilita sua mudança. Encontre motoristas flex e ajudantes de confiança perto de você. Compare preços, veja avaliações e mude tranquilo.",
   keywords: [
     "mudança",
     "carreto",
     "frete",
     "mudança residencial",
     "frete local",
-    "prestador de mudança",
+    "mudança fácil",
+    "mova fácil",
     "mudança barata",
     "carreto barato",
+    "ajudante de mudança",
+    "motorista de mudança",
   ],
   manifest: "/manifest.json",
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: "MudeJá",
-    title: "MudeJá — Mudanças, Carretos e Fretes Confiáveis",
+    siteName: "MovaFácil",
+    title: "MovaFácil — Sua mudança sem dor de cabeça",
     description:
-      "Encontre prestadores verificados para mudanças, carretos e fretes locais.",
+      "O app que facilita sua mudança. Motoristas flex e ajudantes de confiança perto de você.",
   },
   robots: {
     index: true,
@@ -47,8 +50,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0D9488" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F172A" },
+    { media: "(prefers-color-scheme: light)", color: "#F26522" },
+    { media: "(prefers-color-scheme: dark)", color: "#1E293B" },
   ],
 };
 
