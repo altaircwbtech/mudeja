@@ -484,6 +484,6 @@ CREATE TRIGGER trg_increment_proposals AFTER INSERT ON proposals FOR EACH ROW EX
 INSERT INTO cities (name, state, slug, latitude, longitude, population, is_active, launched_at, meta_title, meta_description)
 VALUES (
     'Curitiba', 'PR', 'curitiba', -25.4284, -49.2733, 1963726, TRUE, NOW(),
-    'Mudança em Curitiba - Prestadores Verificados | MudeJá',
-    'Encontre os melhores prestadores de mudança, carreto e frete em Curitiba. Avaliações reais e profissionais verificados.'
+    'Mudança em Curitiba - Profissionais Verificados | MovaFácil',
+    'Encontre motoristas e ajudantes de mudança verificados em Curitiba. Avaliações reais, preços justos. MovaFácil.'
 );
