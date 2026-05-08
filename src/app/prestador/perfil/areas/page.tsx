@@ -30,31 +30,42 @@ export default async function ServiceAreasPage() {
     .eq("provider_id", provider.id)
     .order("created_at", { ascending: false });
 
-  // Fetch available cities for the dropdown (from our cities table)
+  // Fetch available cities for the dropdown (all cities for now to avoid empty lists)
   const { data: availableCities } = await supabase
     .from("cities")
     .select("*")
-    .eq("is_active", true)
     .order("name");
 
   // Server Action to add an area
   async function addArea(formData: FormData) {
     "use server";
     const cityId = formData.get("cityId") as string;
+    const manualCity = formData.get("manualCity") as string;
     const supabase = await createClient();
     
-    // Get city info
-    const { data: cityData } = await supabase
-      .from("cities")
-      .select("name, state")
-      .eq("id", cityId)
-      .single();
+    let cityName = "";
+    let stateName = "PR"; // Default for now
 
-    if (cityData && provider) {
+    if (cityId) {
+      // Get city info from DB
+      const { data: cityData } = await supabase
+        .from("cities")
+        .select("name, state")
+        .eq("id", cityId)
+        .single();
+      if (cityData) {
+        cityName = cityData.name;
+        stateName = cityData.state;
+      }
+    } else if (manualCity) {
+      cityName = manualCity;
+    }
+
+    if (cityName && provider) {
       await supabase.from("provider_service_areas").insert({
         provider_id: provider.id,
-        city: cityData.name,
-        state: cityData.state,
+        city: cityName,
+        state: stateName,
       });
       revalidatePath("/prestador/perfil/areas");
       revalidatePath("/prestador");
@@ -99,23 +110,39 @@ export default async function ServiceAreasPage() {
             <CardTitle className="text-lg">Adicionar Nova Cidade</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={addArea} className="flex gap-2">
-              <select 
-                name="cityId" 
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              >
-                <option value="">Selecione uma cidade...</option>
-                {availableCities?.map((city) => (
-                  <option key={city.id} value={city.id}>
-                    {city.name} - {city.state}
-                  </option>
-                ))}
-              </select>
-              <Button type="submit" className="gap-2">
-                <Plus className="h-4 w-4" />
-                Adicionar
-              </Button>
+            <form action={addArea} className="space-y-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
+                {availableCities && availableCities.length > 0 ? (
+                  <select 
+                    name="cityId" 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="">Selecione na lista...</option>
+                    {availableCities.map((city) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name} - {city.state}
+                      </option>
+                    ))}
+                  </select>
+                ) : null}
+
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="manualCity"
+                    placeholder="Ou digite o nome da cidade..."
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  />
+                </div>
+
+                <Button type="submit" className="gap-2 shrink-0">
+                  <Plus className="h-4 w-4" />
+                  Adicionar
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                * Se a cidade não aparecer na lista, você pode digitá-la manualmente no campo ao lado.
+              </p>
             </form>
           </CardContent>
         </Card>
