@@ -17,6 +17,7 @@ import {
   Clock,
   ThumbsUp,
   Smartphone,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -306,35 +307,57 @@ export default async function LandingPage() {
                 </Button>
               </div>
 
-              <div className="relative">
-                <div className="aspect-square rounded-[40px] bg-gradient-to-tr from-primary to-orange-300 p-1">
-                  <div className="h-full w-full rounded-[38px] bg-white p-8 dark:bg-zinc-900">
+              <div className="relative animate-float">
+                <div className="aspect-square rounded-[40px] bg-gradient-to-tr from-primary/20 to-orange-300/20 p-1 shadow-2xl">
+                  <div className="h-full w-full rounded-[38px] bg-white p-8 dark:bg-zinc-900 border border-white/20">
                     {/* Mock dashboard UI */}
                     <div className="space-y-6">
-                      <div className="h-8 w-1/2 rounded-full bg-muted" />
+                      <div className="h-8 w-1/2 rounded-full bg-muted/50" />
                       <div className="grid grid-cols-3 gap-4">
-                        <div className="h-24 rounded-2xl bg-primary/10" />
-                        <div className="h-24 rounded-2xl bg-muted" />
-                        <div className="h-24 rounded-2xl bg-muted" />
+                        <div className="h-24 rounded-2xl bg-primary/10 flex flex-col items-center justify-center p-2 border border-primary/5">
+                          <div className="h-1.5 w-8 rounded-full bg-primary/40 mb-2" />
+                          <div className="h-3 w-12 rounded-full bg-primary/20" />
+                        </div>
+                        <div className="h-24 rounded-2xl bg-muted/30" />
+                        <div className="h-24 rounded-2xl bg-muted/30" />
                       </div>
                       <div className="space-y-4">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="flex items-center gap-4 rounded-2xl border p-4 shadow-sm">
-                            <div className="h-12 w-12 rounded-full bg-muted" />
-                            <div className="flex-1 space-y-2">
-                              <div className="h-4 w-3/4 rounded-full bg-muted" />
-                              <div className="h-3 w-1/2 rounded-full bg-muted" />
+                        {[
+                          { name: "Carlos Silva", price: "R$ 480", rating: "4.9", color: "bg-blue-400" },
+                          { name: "Marcos Frete", price: "R$ 520", rating: "5.0", color: "bg-emerald-400" },
+                          { name: "João Mudanças", price: "R$ 450", rating: "4.8", color: "bg-orange-400" }
+                        ].map((driver, i) => (
+                          <div 
+                            key={i} 
+                            className="flex items-center gap-4 rounded-2xl border bg-card p-4 shadow-sm relative overflow-hidden group transition-all hover:border-primary/30"
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full animate-shimmer" />
+                            <div className={`h-10 w-10 rounded-full ${driver.color} flex items-center justify-center text-white font-bold text-xs`}>
+                              {driver.name.charAt(0)}
                             </div>
-                            <div className="h-8 w-20 rounded-lg bg-primary/20" />
+                            <div className="flex-1 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[13px] font-bold">{driver.name}</span>
+                                <span className="text-[13px] font-black text-primary">{driver.price}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <div className="h-1.5 w-24 rounded-full bg-muted" />
+                                <span className="text-[10px] text-muted-foreground ml-auto">⭐ {driver.rating}</span>
+                              </div>
+                            </div>
+                            <div className="h-8 w-16 rounded-lg bg-primary/10 border border-primary/20" />
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
                 </div>
-                {/* Decorative element */}
-                <div className="absolute -right-8 bottom-12 hidden h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-2xl dark:bg-zinc-800 md:flex">
+                {/* Decorative elements */}
+                <div className="absolute -right-8 bottom-12 hidden h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-2xl dark:bg-zinc-800 md:flex border border-border/50 animate-bounce-slow">
                   <Clock className="h-10 w-10 text-primary" />
+                </div>
+                <div className="absolute -left-8 top-12 hidden h-20 w-20 items-center justify-center rounded-2xl bg-primary shadow-2xl md:flex border border-primary animate-float">
+                  <ShieldCheck className="h-10 w-10 text-white" />
                 </div>
               </div>
             </div>
