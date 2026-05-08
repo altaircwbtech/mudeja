@@ -50,11 +50,27 @@ export default async function PrestadorDashboard() {
 
   const sentRequestIds = new Set(myProposals?.map((p) => p.request_id) || []);
 
-  // Fetch available opportunities (published requests)
-  const { data: opportunities } = await supabase
+  // Get provider's service areas
+  const { data: serviceAreas } = await supabase
+    .from("provider_service_areas")
+    .select("city, state")
+    .eq("provider_id", provider?.id);
+
+  const filterCities = serviceAreas?.length 
+    ? serviceAreas.map(a => a.city) 
+    : (profile.city ? [profile.city] : []);
+
+  // Fetch available opportunities (filtered by city if available)
+  let opportunitiesQuery = supabase
     .from("service_requests")
     .select("*")
-    .in("status", ["published", "receiving_proposals"])
+    .in("status", ["published", "receiving_proposals"]);
+  
+  if (filterCities.length > 0) {
+    opportunitiesQuery = opportunitiesQuery.in("origin_city", filterCities);
+  }
+
+  const { data: opportunities } = await opportunitiesQuery
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -138,6 +154,12 @@ export default async function PrestadorDashboard() {
               {opportunities?.length || 0} novas
             </Badge>
           </div>
+          
+          {filterCities.length > 0 && (
+            <p className="text-xs text-muted-foreground mb-4 flex items-center gap-1">
+              Filtro ativo: <span className="font-semibold text-foreground">{filterCities.join(", ")}</span>
+            </p>
+          )}
 
           {!opportunities || opportunities.length === 0 ? (
             <Card>
@@ -221,9 +243,9 @@ export default async function PrestadorDashboard() {
           <CardContent className="space-y-3">
             {[
               { label: "Foto de perfil", done: !!profile.avatar_url },
-              { label: "Verificação de identidade", done: provider?.selfie_verified },
+              { label: "Verificação de identidade", done: provider?.selfie_verified, href: "/prestador/perfil/verificacao" },
               { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/perfil/veiculos" },
-              { label: "Área de atendimento", done: false },
+              { label: "Área de atendimento", done: (serviceAreas?.length || 0) > 0, href: "/prestador/perfil/areas" },
               { label: "Fotos de trabalhos", done: false },
             ].map((item) => {
               const content = (
