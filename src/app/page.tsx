@@ -14,6 +14,9 @@ import {
   TrendingUp,
   MessageCircle,
   Zap,
+  Clock,
+  ThumbsUp,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,34 +39,33 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <Link href="/">
+      <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" className="transition-opacity hover:opacity-90">
             <Logo size="md" />
           </Link>
-          <div className="hidden items-center gap-6 md:flex">
-            <Link
-              href="/como-funciona"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
+          
+          <div className="hidden items-center gap-8 md:flex">
+            <Link href="#como-funciona" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Como funciona
             </Link>
-            <Link
-              href="/cadastro"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link href="#servicos" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+              Serviços
+            </Link>
+            <Link href="/cadastro" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Seja um parceiro
             </Link>
           </div>
+
           <div className="flex items-center gap-3">
             {user ? (
               <>
                 <form action={signOut}>
-                  <Button variant="ghost" size="sm" type="submit">
+                  <Button variant="ghost" size="sm" type="submit" className="hidden sm:inline-flex">
                     Sair
                   </Button>
                 </form>
-                <Button size="sm" className="shadow-md shadow-primary/25" asChild>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20" asChild>
                   <Link href={dashboardPath}>
                     Meu Painel
                   </Link>
@@ -71,15 +73,11 @@ export default async function LandingPage() {
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="/login">
-                    Entrar
-                  </Link>
+                <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+                  <Link href="/login">Entrar</Link>
                 </Button>
-                <Button size="sm" className="shadow-md shadow-primary/25" asChild>
-                  <Link href="/cadastro">
-                    Cadastrar grátis
-                  </Link>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20" asChild>
+                  <Link href="/cadastro">Começar agora</Link>
                 </Button>
               </>
             )}
@@ -87,299 +85,334 @@ export default async function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Background — warm gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-orange-50/50" />
-        <div className="absolute top-10 right-[-15%] h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-80 w-80 rounded-full bg-orange-100/30 blur-3xl" />
-
-        <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-32">
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge
-              variant="secondary"
-              className="mb-6 gap-1.5 px-4 py-1.5 text-sm font-medium"
-            >
-              <MapPin className="h-3.5 w-3.5" />
-              Disponível em Curitiba
-            </Badge>
-
-            <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-              Sua mudança{" "}
-              <span className="bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent">
-                sem dor de cabeça
-              </span>
-            </h1>
-
-            <p className="mb-10 text-lg text-muted-foreground md:text-xl">
-              Conectamos você a motoristas flex e ajudantes de confiança perto
-              de você. Compare preços, veja avaliações reais e mude tranquilo.
-            </p>
-
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button
-                size="lg"
-                className="h-13 w-full gap-2 px-8 text-base font-semibold shadow-lg shadow-primary/30 sm:w-auto"
-                asChild
-              >
-                <Link href="/cadastro">
-                  <Search className="h-5 w-5" />
-                  Buscar serviço
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-13 w-full gap-2 px-8 text-base font-semibold sm:w-auto"
-                asChild
-              >
-                <Link href="/cadastro">
-                  <Truck className="h-5 w-5" />
-                  Seja um motorista
-                </Link>
-              </Button>
-            </div>
-
-            {/* Social proof */}
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <LogoIcon size={16} className="text-primary" />
-                <span>
-                  <strong className="text-foreground">50+</strong> parceiros
-                  verificados
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-amber-500" />
-                <span>
-                  <strong className="text-foreground">4.8</strong> nota média
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-primary" />
-                <span>
-                  <strong className="text-foreground">100%</strong> verificados
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services */}
-      <section className="border-t bg-muted/30 py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold tracking-tight">
-              O que você precisa mover?
-            </h2>
-            <p className="text-muted-foreground">
-              Motoristas e ajudantes para todo tipo de mudança e frete.
-            </p>
+      <main>
+        {/* Hero Section */}
+        <section className="relative overflow-hidden pt-16 pb-20 md:pt-24 md:pb-32">
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-0 right-0 -mr-20 h-[600px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
+            <div className="absolute bottom-0 left-0 -ml-20 h-[400px] w-[400px] rounded-full bg-orange-100/20 blur-3xl" />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                icon: Truck,
-                title: "Mudança Completa",
-                desc: "Casa, apartamento, kitnet. De poucos itens a mudanças completas com equipe.",
-                badge: "Mais popular",
-              },
-              {
-                icon: Package,
-                title: "Carreto",
-                desc: "Transporte de itens avulsos: sofá, geladeira, máquina de lavar e mais.",
-                badge: null,
-              },
-              {
-                icon: Zap,
-                title: "Frete Rápido",
-                desc: "Frete de mercadorias, materiais de construção e cargas em geral.",
-                badge: null,
-              },
-            ].map((service) => (
-              <Card
-                key={service.title}
-                className="group relative overflow-hidden border-none bg-card shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
-              >
-                <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
-                    <service.icon className="h-6 w-6" />
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              {/* Text Content */}
+              <div className="animate-fade-in-up">
+                <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-semibold tracking-wide text-primary border-primary/20 bg-primary/5">
+                  <MapPin className="mr-1.5 h-3.5 w-3.5" />
+                  Mude com tranquilidade em Curitiba
+                </Badge>
+                
+                <h1 className="mb-6 text-4xl font-black tracking-tight text-foreground sm:text-5xl lg:text-6xl lg:leading-[1.1]">
+                  Sua mudança sem o peso da{" "}
+                  <span className="relative inline-block text-primary">
+                    dor de cabeça
+                    <svg className="absolute -bottom-2 left-0 h-3 w-full text-primary/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                      <path d="M0 5 Q 25 0 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
+                    </svg>
+                  </span>
+                </h1>
+
+                <p className="mb-10 text-lg leading-relaxed text-muted-foreground md:text-xl">
+                  Conectamos você aos melhores motoristas e ajudantes da região. 
+                  Compare orçamentos em tempo real, veja avaliações e combine tudo direto pelo WhatsApp.
+                </p>
+
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <Button size="lg" className="h-14 px-8 text-lg font-bold shadow-xl shadow-primary/30 group" asChild>
+                    <Link href="/cadastro">
+                      Solicitar Orçamento
+                      <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-bold" asChild>
+                    <Link href="/cadastro">Sou Motorista</Link>
+                  </Button>
+                </div>
+
+                <div className="mt-12 flex items-center gap-6">
+                  <div className="flex -space-x-3">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-muted overflow-hidden">
+                        <img 
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} 
+                          alt="User" 
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-start justify-between">
-                    <h3 className="mb-2 text-lg font-semibold">{service.title}</h3>
-                    {service.badge && (
-                      <Badge variant="secondary" className="text-xs shrink-0">
-                        {service.badge}
-                      </Badge>
-                    )}
+                  <div className="text-sm">
+                    <div className="flex items-center gap-1">
+                      <div className="flex">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <span className="font-bold">4.9/5</span>
+                    </div>
+                    <p className="text-muted-foreground">Baseado em +1.200 mudanças</p>
                   </div>
-                  <p className="text-sm text-muted-foreground">{service.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold tracking-tight">
-              Como funciona
-            </h2>
-            <p className="text-muted-foreground">
-              Simples, rápido e seguro. Em 3 passos você resolve sua mudança.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                step: "1",
-                title: "Solicite",
-                desc: "Conte o que precisa mover, de onde e para onde. Leva menos de 2 minutos.",
-                icon: MessageCircle,
-              },
-              {
-                step: "2",
-                title: "Receba propostas",
-                desc: "Compare preços e avaliações de motoristas e ajudantes da sua região.",
-                icon: TrendingUp,
-              },
-              {
-                step: "3",
-                title: "Mude tranquilo",
-                desc: "Escolha o melhor profissional e combine os detalhes direto pelo WhatsApp.",
-                icon: CheckCircle2,
-              },
-            ].map((item, idx) => (
-              <div key={item.step} className="relative text-center">
-                {/* Connector line between steps */}
-                {idx < 2 && (
-                  <div className="absolute top-7 left-[calc(50%+40px)] hidden h-0.5 w-[calc(100%-80px)] bg-gradient-to-r from-primary/30 to-primary/10 md:block" />
-                )}
-                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
-                  <item.icon className="h-7 w-7" />
                 </div>
-                <div className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
-                  Passo {item.step}
+              </div>
+
+              {/* Hero Image / Visual */}
+              <div className="relative animate-float lg:ml-auto">
+                <div className="relative z-10 overflow-hidden rounded-3xl shadow-2xl ring-1 ring-border/50">
+                  <img 
+                    src="/movafacil_hero_premium.png" 
+                    alt="Mudança MovaFácil" 
+                    className="aspect-video w-full object-cover md:aspect-square lg:h-[550px]"
+                  />
+                  {/* Floating Cards over image */}
+                  <div className="absolute top-6 left-6 rounded-2xl bg-white/90 p-4 shadow-xl backdrop-blur-md dark:bg-black/80">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white">
+                        <CheckCircle2 className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</p>
+                        <p className="text-sm font-bold">Motorista Verificado</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute bottom-6 right-6 rounded-2xl bg-white/90 p-4 shadow-xl backdrop-blur-md dark:bg-black/80">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
+                        <TrendingUp className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Economia</p>
+                        <p className="text-sm font-bold">Até 30% mais barato</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
+                {/* Decorative blobs */}
+                <div className="absolute -top-10 -right-10 -z-10 h-32 w-32 rounded-full bg-primary/20 blur-2xl" />
+                <div className="absolute -bottom-10 -left-10 -z-10 h-40 w-40 rounded-full bg-orange-400/20 blur-3xl" />
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Trust section */}
-      <section className="border-t bg-muted/30 py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold tracking-tight">
-              Profissionais de confiança
-            </h2>
-            <p className="text-muted-foreground">
-              Cada parceiro passa por verificações para garantir sua segurança.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                icon: Shield,
-                title: "Identidade verificada",
-                desc: "CPF e selfie validados",
-              },
-              {
-                icon: Star,
-                title: "Avaliações reais",
-                desc: "De clientes que usaram o serviço",
-              },
-              {
-                icon: Truck,
-                title: "Veículo verificado",
-                desc: "Fotos e dados do veículo",
-              },
-              {
-                icon: MessageCircle,
-                title: "WhatsApp direto",
-                desc: "Contato verificado e seguro",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="flex flex-col items-center rounded-xl border bg-card p-6 text-center shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
-              >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <h3 className="mb-1 font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA for providers */}
-      <section className="py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-orange-500 to-orange-600 p-8 md:p-14 text-white">
-            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-            <div className="absolute bottom-[-50px] left-[-30px] h-48 w-48 rounded-full bg-white/5 blur-xl" />
-            <div className="relative max-w-lg">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
-                <LogoIcon size={28} />
-              </div>
-              <h2 className="mb-4 text-3xl font-bold">
-                Tem veículo? Seja um parceiro!
-              </h2>
-              <p className="mb-6 text-white/85">
-                Cadastre-se gratuitamente e receba oportunidades de trabalho na
-                sua região. Construa sua reputação e cresça seu negócio com a
-                MovaFácil.
+        {/* Features Grid */}
+        <section className="bg-muted/50 py-24" id="servicos">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="mb-16 text-center">
+              <h2 className="mb-4 text-3xl font-black tracking-tight sm:text-4xl">Tudo que você precisa em um só lugar</h2>
+              <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+                Da pequena entrega à mudança completa, temos o parceiro ideal para o seu perfil.
               </p>
-              <Link href="/cadastro">
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="gap-2 font-semibold shadow-lg"
-                >
-                  Cadastrar como parceiro
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </Link>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              {[
+                {
+                  title: "Preço Justo",
+                  desc: "Receba múltiplos orçamentos e escolha o que cabe no seu bolso sem taxas escondidas.",
+                  icon: TrendingUp,
+                  color: "text-blue-500",
+                  bg: "bg-blue-50"
+                },
+                {
+                  title: "Segurança Total",
+                  desc: "Todos os parceiros são verificados rigorosamente antes de entrar na plataforma.",
+                  icon: Shield,
+                  color: "text-green-500",
+                  bg: "bg-green-50"
+                },
+                {
+                  title: "Agilidade",
+                  desc: "Precisa mudar hoje? Encontre motoristas disponíveis agora mesmo na sua região.",
+                  icon: Zap,
+                  color: "text-orange-500",
+                  bg: "bg-orange-50"
+                },
+                {
+                  title: "Comunicação Direta",
+                  desc: "Combine detalhes, envie fotos e tire dúvidas direto pelo WhatsApp com o profissional.",
+                  icon: MessageCircle,
+                  color: "text-purple-500",
+                  bg: "bg-purple-50"
+                },
+                {
+                  title: "Flexibilidade",
+                  desc: "Veículos de todos os tamanhos: de picapes para pequenos fretes a caminhões baú.",
+                  icon: Truck,
+                  color: "text-amber-500",
+                  bg: "bg-amber-50"
+                },
+                {
+                  title: "Apoio ao Cliente",
+                  desc: "Nossa equipe está sempre pronta para ajudar caso você tenha qualquer problema.",
+                  icon: ThumbsUp,
+                  color: "text-rose-500",
+                  bg: "bg-rose-50"
+                }
+              ].map((feature, i) => (
+                <div key={i} className="group relative rounded-3xl border bg-card p-8 transition-all hover:shadow-xl hover:-translate-y-1">
+                  <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${feature.bg} ${feature.color} transition-colors group-hover:bg-primary group-hover:text-white`}>
+                    <feature.icon className="h-7 w-7" />
+                  </div>
+                  <h3 className="mb-3 text-xl font-bold">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* How it Works - Steps */}
+        <section className="py-24" id="como-funciona">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
+            <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
+              <div>
+                <h2 className="mb-8 text-3xl font-black tracking-tight sm:text-4xl">Mudar nunca foi tão simples</h2>
+                <div className="space-y-12">
+                  {[
+                    {
+                      step: "01",
+                      title: "Peça seu orçamento",
+                      desc: "Diga-nos o que você precisa mover, a data e o local. Leva menos de 1 minuto.",
+                      icon: Smartphone
+                    },
+                    {
+                      step: "02",
+                      title: "Compare as ofertas",
+                      desc: "Receba propostas de motoristas verificados. Veja o perfil e as avaliações de cada um.",
+                      icon: Users
+                    },
+                    {
+                      step: "03",
+                      title: "Feche o negócio",
+                      desc: "Escolha a melhor proposta e combine os detalhes finais diretamente via WhatsApp.",
+                      icon: CheckCircle2
+                    }
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-6">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-bold text-white shadow-lg shadow-primary/20">
+                        {item.step}
+                      </div>
+                      <div>
+                        <h3 className="mb-2 text-xl font-bold">{item.title}</h3>
+                        <p className="text-lg text-muted-foreground">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button size="lg" className="mt-12 h-14 px-10 text-lg font-bold" asChild>
+                  <Link href="/cadastro">Criar Solicitação Grátis</Link>
+                </Button>
+              </div>
+
+              <div className="relative">
+                <div className="aspect-square rounded-[40px] bg-gradient-to-tr from-primary to-orange-300 p-1">
+                  <div className="h-full w-full rounded-[38px] bg-white p-8 dark:bg-zinc-900">
+                    {/* Mock dashboard UI */}
+                    <div className="space-y-6">
+                      <div className="h-8 w-1/2 rounded-full bg-muted" />
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="h-24 rounded-2xl bg-primary/10" />
+                        <div className="h-24 rounded-2xl bg-muted" />
+                        <div className="h-24 rounded-2xl bg-muted" />
+                      </div>
+                      <div className="space-y-4">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="flex items-center gap-4 rounded-2xl border p-4 shadow-sm">
+                            <div className="h-12 w-12 rounded-full bg-muted" />
+                            <div className="flex-1 space-y-2">
+                              <div className="h-4 w-3/4 rounded-full bg-muted" />
+                              <div className="h-3 w-1/2 rounded-full bg-muted" />
+                            </div>
+                            <div className="h-8 w-20 rounded-lg bg-primary/20" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Decorative element */}
+                <div className="absolute -right-8 bottom-12 hidden h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-2xl dark:bg-zinc-800 md:flex">
+                  <Clock className="h-10 w-10 text-primary" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Banner */}
+        <section className="px-4 py-24 sm:px-6">
+          <div className="mx-auto max-w-7xl">
+            <div className="relative overflow-hidden rounded-[40px] bg-zinc-900 px-8 py-20 text-center text-white shadow-2xl md:px-16">
+              {/* Background patterns */}
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+              <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/30 blur-3xl" />
+              <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
+
+              <div className="relative z-10 mx-auto max-w-3xl">
+                <LogoIcon size={64} className="mx-auto mb-8 text-primary" />
+                <h2 className="mb-6 text-4xl font-black tracking-tight sm:text-5xl">Pronto para sua nova fase?</h2>
+                <p className="mb-12 text-xl text-zinc-400">
+                  Junte-se a milhares de pessoas que mudaram com segurança e economia usando a MovaFácil.
+                </p>
+                <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                  <Button size="lg" className="h-16 px-12 text-xl font-black animate-shimmer relative overflow-hidden" asChild>
+                    <Link href="/cadastro">Começar Agora</Link>
+                  </Button>
+                  <Button variant="outline" size="lg" className="h-16 border-zinc-700 bg-transparent px-12 text-xl font-black text-white hover:bg-zinc-800" asChild>
+                    <Link href="/cadastro">Ver Preços</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30 py-12">
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <Logo size="sm" />
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-              <Link href="/como-funciona" className="hover:text-foreground transition-colors">
-                Como funciona
-              </Link>
-              <Link href="/para-prestadores" className="hover:text-foreground transition-colors">
-                Seja um parceiro
-              </Link>
-              <Link href="/termos" className="hover:text-foreground transition-colors">
-                Termos de uso
-              </Link>
-              <Link href="/privacidade" className="hover:text-foreground transition-colors">
-                Privacidade
-              </Link>
+      <footer className="border-t bg-card py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid gap-12 md:grid-cols-4">
+            <div className="col-span-2 space-y-6">
+              <Logo size="md" />
+              <p className="max-w-sm text-lg text-muted-foreground">
+                A plataforma que simplifica sua mudança conectando você aos melhores profissionais de Curitiba e região.
+              </p>
+              <div className="flex gap-4">
+                {/* Social placeholders */}
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full bg-muted hover:bg-primary hover:text-white transition-colors cursor-pointer">
+                    <span className="sr-only">Social</span>
+                    <Smartphone className="h-5 w-5" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="mb-6 font-bold uppercase tracking-wider text-muted-foreground">Plataforma</h4>
+              <ul className="space-y-4 font-medium">
+                <li><Link href="#como-funciona" className="hover:text-primary transition-colors">Como funciona</Link></li>
+                <li><Link href="#servicos" className="hover:text-primary transition-colors">Serviços</Link></li>
+                <li><Link href="/cadastro" className="hover:text-primary transition-colors">Cadastrar</Link></li>
+                <li><Link href="/login" className="hover:text-primary transition-colors">Login</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-6 font-bold uppercase tracking-wider text-muted-foreground">Empresa</h4>
+              <ul className="space-y-4 font-medium">
+                <li><Link href="/termos" className="hover:text-primary transition-colors">Termos de uso</Link></li>
+                <li><Link href="/privacidade" className="hover:text-primary transition-colors">Privacidade</Link></li>
+                <li><Link href="/contato" className="hover:text-primary transition-colors">Contato</Link></li>
+                <li><Link href="/ajuda" className="hover:text-primary transition-colors">Central de Ajuda</Link></li>
+              </ul>
             </div>
           </div>
-          <div className="mt-8 text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} MovaFácil. Todos os direitos reservados.
+          
+          <div className="mt-16 border-t pt-8 text-center text-sm text-muted-foreground">
+            <p>© {new Date().getFullYear()} MovaFácil. Feito com ❤️ para facilitar sua vida.</p>
           </div>
         </div>
       </footer>

@@ -80,7 +80,7 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <Logo size="sm" hideText />
+          <Logo size="sm" showText={false} />
           <h1 className="text-lg font-semibold truncate max-w-[200px] md:max-w-md">
             {request.title}
           </h1>
@@ -165,7 +165,7 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                 {proposals?.map((proposal) => {
                   const isAccepted = proposal.status === "accepted";
                   const providerName = proposal.provider?.business_name || "Motorista Parceiro";
-                  const providerPhone = proposal.provider?.user?.phone;
+                  const providerPhone = proposal.provider?.user?.[0]?.phone;
                   const whatsappMsg = encodeURIComponent(
                     `Olá ${providerName}, vi sua proposta de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.price)} no MovaFácil para minha mudança e gostaria de fechar com você!`
                   );
@@ -192,8 +192,8 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                           {/* Info do Prestador */}
                           <Link href={`/perfil/${proposal.provider?.id}`} className="flex items-start gap-4 flex-1 hover:opacity-80 transition-opacity cursor-pointer group">
                             <div className="h-12 w-12 rounded-full bg-slate-100 border flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:ring-2 group-hover:ring-primary/50 transition-all">
-                              {proposal.provider?.user?.avatar_url ? (
-                                <img src={proposal.provider.user.avatar_url} alt={providerName} className="h-full w-full object-cover" />
+                              {proposal.provider?.user?.[0]?.avatar_url ? (
+                                <img src={proposal.provider.user[0].avatar_url} alt={providerName} className="h-full w-full object-cover" />
                               ) : (
                                 <Truck className="h-6 w-6 text-slate-400" />
                               )}

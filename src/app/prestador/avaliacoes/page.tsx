@@ -91,7 +91,7 @@ export default async function MinhasAvaliacoesPage() {
                         <div className="space-y-1 w-full">
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold">{review.reviewer?.full_name || "Cliente"}</span>
+                              <span className="font-semibold">{review.reviewer?.[0]?.full_name || "Cliente"}</span>
                               <span className="text-xs text-muted-foreground">• {new Date(review.created_at).toLocaleDateString('pt-BR')}</span>
                             </div>
                             <div className="flex items-center bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
@@ -101,7 +101,7 @@ export default async function MinhasAvaliacoesPage() {
                           </div>
                           
                           <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider">
-                            Serviço: {review.request?.title}
+                            Serviço: {review.request?.[0]?.title}
                           </p>
 
                           {review.comment ? (

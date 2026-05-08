@@ -57,13 +57,13 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
     .order("created_at", { ascending: false });
 
   // Fallback data if needed
-  const name = provider.business_name || provider.user?.full_name;
-  const location = provider.user?.city 
-    ? `${provider.user.city}, ${provider.user.state}`
+  const name = provider.business_name || provider.user?.[0]?.full_name;
+  const location = provider.user?.[0]?.city 
+    ? `${provider.user[0].city}, ${provider.user[0].state}`
     : "Localização não informada";
     
-  const memberSince = provider.user?.created_at 
-    ? new Date(provider.user.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+  const memberSince = provider.user?.[0]?.created_at 
+    ? new Date(provider.user[0].created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
     : "";
 
   return (
@@ -74,7 +74,7 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <Logo size="sm" hideText />
+        <Logo size="sm" showText={false} />
         <h1 className="ml-auto text-sm font-medium text-muted-foreground">Perfil do Parceiro</h1>
       </header>
 
@@ -83,8 +83,8 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
         {/* Placeholder for Cover Photo if we ever add one */}
         <div className="absolute -bottom-12 left-6 md:left-12 flex items-end">
           <div className="h-24 w-24 md:h-32 md:w-32 rounded-full border-4 border-background bg-slate-100 flex items-center justify-center overflow-hidden shadow-md">
-            {provider.user?.avatar_url ? (
-              <img src={provider.user.avatar_url} alt={name} className="h-full w-full object-cover" />
+            {provider.user?.[0]?.avatar_url ? (
+              <img src={provider.user[0].avatar_url} alt={name} className="h-full w-full object-cover" />
             ) : (
               <Truck className="h-10 w-10 md:h-16 md:w-16 text-slate-400" />
             )}
@@ -101,7 +101,7 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
               <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
                 {name}
                 {provider.selfie_verified && (
-                  <ShieldCheck className="h-6 w-6 text-green-500" title="Identidade Verificada" />
+                  <ShieldCheck className="h-6 w-6 text-green-500" />
                 )}
               </h1>
               <p className="flex items-center gap-1.5 text-muted-foreground mt-1">
@@ -177,17 +177,17 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
-                          {review.reviewer?.avatar_url ? (
-                            <img src={review.reviewer.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
+                          {review.reviewer?.[0]?.avatar_url ? (
+                            <img src={review.reviewer[0].avatar_url} alt="Avatar" className="h-full w-full object-cover" />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center font-bold text-slate-400">
-                              {review.reviewer?.full_name?.charAt(0) || "U"}
+                              {review.reviewer?.[0]?.full_name?.charAt(0) || "U"}
                             </div>
                           )}
                         </div>
                         <div>
                           <p className="font-semibold text-sm">
-                            {review.reviewer?.full_name?.split(" ")[0]}
+                            {review.reviewer?.[0]?.full_name?.split(" ")[0]}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {formatDistanceToNow(new Date(review.created_at), { addSuffix: true, locale: ptBR })}

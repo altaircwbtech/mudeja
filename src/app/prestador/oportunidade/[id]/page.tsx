@@ -81,7 +81,7 @@ export default async function OportunidadeDetailsPage(props: { params: Promise<{
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <Logo size="sm" hideText />
+          <Logo size="sm" showText={false} />
           <h1 className="text-lg font-semibold">Detalhes do Serviço</h1>
         </div>
       </header>
