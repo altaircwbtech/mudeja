@@ -83,6 +83,15 @@ export default async function PrestadorDashboard() {
 
   const hasVehicles = (myVehicles?.length || 0) > 0;
 
+  // Fetch provider photos for checklist
+  const { data: myPhotos } = await supabase
+    .from("provider_photos")
+    .select("id")
+    .eq("provider_id", provider?.id)
+    .limit(1);
+
+  const hasPhotos = (myPhotos?.length || 0) > 0;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -246,7 +255,7 @@ export default async function PrestadorDashboard() {
               { label: "Verificação de identidade", done: provider?.selfie_verified, href: "/prestador/perfil/verificacao" },
               { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/perfil/veiculos" },
               { label: "Área de atendimento", done: (serviceAreas?.length || 0) > 0, href: "/prestador/perfil/areas" },
-              { label: "Fotos de trabalhos", done: false },
+              { label: "Fotos de trabalhos", done: hasPhotos, href: "/prestador/perfil/fotos" },
             ].map((item) => {
               const content = (
                 <div
