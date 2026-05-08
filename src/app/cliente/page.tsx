@@ -157,9 +157,32 @@ export default async function ClienteDashboard() {
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2">
-                              <Badge variant={req.status === 'published' ? 'default' : 'secondary'} className="mb-2 bg-orange-100 text-orange-800 hover:bg-orange-200 border-none">
-                                {req.status === 'published' ? 'Buscando Profissionais' : req.status === 'receiving_proposals' ? 'Propostas Recebidas' : req.status}
-                              </Badge>
+                              {(() => {
+                                let badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-200 border-none";
+                                let badgeText = req.status;
+
+                                switch (req.status) {
+                                  case "published":
+                                  case "receiving_proposals":
+                                    badgeText = "Buscando Profissionais";
+                                    badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-200 border-none";
+                                    break;
+                                  case "matched":
+                                    badgeText = "Motorista Encontrado";
+                                    badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-200 border-none";
+                                    break;
+                                  case "completed":
+                                    badgeText = "Finalizada";
+                                    badgeColor = "bg-green-100 text-green-800 hover:bg-green-200 border-none";
+                                    break;
+                                }
+
+                                return (
+                                  <Badge variant="secondary" className={`mb-2 ${badgeColor}`}>
+                                    {badgeText}
+                                  </Badge>
+                                );
+                              })()}
                               <span className="mb-2 text-xs text-muted-foreground">
                                 {new Date(req.created_at).toLocaleDateString('pt-BR')}
                               </span>

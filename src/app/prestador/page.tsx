@@ -57,6 +57,15 @@ export default async function PrestadorDashboard() {
     .order("created_at", { ascending: false })
     .limit(10);
 
+  // Fetch provider vehicles to check profile completeness
+  const { data: myVehicles } = await supabase
+    .from("provider_vehicles")
+    .select("id")
+    .eq("provider_id", provider?.id)
+    .limit(1);
+
+  const hasVehicles = (myVehicles?.length || 0) > 0;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -91,19 +100,29 @@ export default async function PrestadorDashboard() {
         {/* Stats */}
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { icon: ClipboardList, label: "Propostas", value: myProposals?.length || 0 },
-            { icon: Star, label: "Avaliação", value: provider?.avg_rating || "—" },
+            { icon: ClipboardList, label: "Propostas", value: myProposals?.length || 0, href: "/prestador/propostas" },
+            { icon: Star, label: "Avaliação", value: provider?.avg_rating || "—", href: "/prestador/avaliacoes" },
             { icon: TrendingUp, label: "Taxa resp.", value: `${provider?.response_rate || 0}%` },
             { icon: Zap, label: "Trust Score", value: provider?.trust_score || "0.0" },
-          ].map((stat) => (
-            <Card key={stat.label}>
-              <CardContent className="p-4 text-center">
-                <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
-                <div className="text-xl font-bold">{stat.value}</div>
-                <div className="text-xs text-muted-foreground">{stat.label}</div>
-              </CardContent>
-            </Card>
-          ))}
+          ].map((stat) => {
+            const CardWrap = (
+              <Card className={`transition-all ${stat.href ? 'hover:border-primary/50 hover:shadow-md cursor-pointer' : ''}`}>
+                <CardContent className="p-4 text-center">
+                  <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
+                  <div className="text-xl font-bold">{stat.value}</div>
+                  <div className="text-xs text-muted-foreground">{stat.label}</div>
+                </CardContent>
+              </Card>
+            );
+
+            return stat.href ? (
+              <Link key={stat.label} href={stat.href}>
+                {CardWrap}
+              </Link>
+            ) : (
+              <div key={stat.label}>{CardWrap}</div>
+            );
+          })}
         </div>
 
         {/* Opportunities list */}
@@ -201,26 +220,34 @@ export default async function PrestadorDashboard() {
             {[
               { label: "Foto de perfil", done: !!profile.avatar_url },
               { label: "Verificação de identidade", done: provider?.selfie_verified },
-              { label: "Veículo cadastrado", done: false },
+              { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/perfil/veiculos" },
               { label: "Área de atendimento", done: false },
               { label: "Fotos de trabalhos", done: false },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="flex items-center justify-between rounded-lg border p-3"
-              >
-                <span className="text-sm">{item.label}</span>
-                {item.done ? (
-                  <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100">
-                    ✓ Feito
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="text-xs">
-                    Pendente
-                  </Badge>
-                )}
-              </div>
-            ))}
+            ].map((item) => {
+              const content = (
+                <div
+                  key={item.label}
+                  className={`flex items-center justify-between rounded-lg border p-3 ${item.href ? 'hover:border-primary/50 cursor-pointer bg-primary/5 transition-colors' : ''}`}
+                >
+                  <span className="text-sm font-medium">{item.label} {item.href && !item.done && <span className="text-xs text-primary font-bold ml-2">Começar →</span>}</span>
+                  {item.done ? (
+                    <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100 border-none">
+                      ✓ Feito
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-xs">
+                      Pendente
+                    </Badge>
+                  )}
+                </div>
+              );
+
+              return item.href ? (
+                <Link key={item.label} href={item.href} className="block">
+                  {content}
+                </Link>
+              ) : content;
+            })}
           </CardContent>
         </Card>
       </main>

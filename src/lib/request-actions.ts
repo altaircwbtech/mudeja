@@ -59,3 +59,46 @@ export async function createRequest(formData: FormData) {
   revalidatePath("/cliente");
   return { success: true };
 }
+
+export async function submitReview(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Usuário não autenticado.");
+  }
+
+  const requestId = formData.get("request_id") as string;
+  const providerId = formData.get("provider_id") as string;
+  const rating = Number(formData.get("rating"));
+  const comment = formData.get("comment") as string;
+
+  if (!requestId || !providerId || !rating || rating < 1 || rating > 5) {
+    throw new Error("Dados de avaliação inválidos.");
+  }
+
+  // Insert review
+  const { error: reviewError } = await supabase.from("reviews").insert({
+    request_id: requestId,
+    reviewer_id: user.id,
+    reviewed_provider_id: providerId,
+    overall_rating: rating,
+    comment: comment || null,
+  });
+
+  if (reviewError) {
+    throw new Error(`Erro ao enviar avaliação: ${reviewError.message}`);
+  }
+
+  // Update request status to completed
+  await supabase
+    .from("service_requests")
+    .update({ status: "completed", completed_at: new Date().toISOString() })
+    .eq("id", requestId);
+
+  revalidatePath("/cliente");
+  revalidatePath(`/perfil/${providerId}`);
+  revalidatePath(`/cliente/solicitacao/${requestId}`);
+  
+  return { success: true };
+}

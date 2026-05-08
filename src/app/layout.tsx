@@ -55,6 +55,10 @@ export const viewport: Viewport = {
   ],
 };
 
+import { Toaster } from "@/components/ui/sonner";
+import { ToastParams } from "@/components/ui/toast-params";
+import { Suspense } from "react";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -64,6 +68,10 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
         <Providers>{children}</Providers>
+        <Toaster />
+        <Suspense fallback={null}>
+          <ToastParams />
+        </Suspense>
       </body>
     </html>
   );

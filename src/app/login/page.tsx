@@ -5,17 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; success?: string }>;
-}) {
-  const params = await searchParams;
-  const error = params.error;
-  const success = params.success;
-
+export default async function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/5 via-background to-orange-50/30 px-4 py-12">
       <div className="w-full max-w-md space-y-6">
@@ -35,22 +26,6 @@ export default async function LoginPage({
           </CardHeader>
 
           <CardContent className="space-y-4">
-            {/* Error message */}
-            {error && (
-              <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/5 p-3 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{decodeURIComponent(error)}</span>
-              </div>
-            )}
-
-            {/* Success message */}
-            {success === "logged_out" && (
-              <div className="flex items-center gap-2 rounded-lg border border-green-500/50 bg-green-50 p-3 text-sm text-green-700">
-                <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>Você saiu com sucesso.</span>
-              </div>
-            )}
-
             <form action={signIn} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

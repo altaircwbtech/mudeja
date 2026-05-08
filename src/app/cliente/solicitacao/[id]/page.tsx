@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/brand/Logo";
 import { acceptProposal } from "@/lib/proposal-actions";
+import ReviewForm from "./review-form";
 
 export default async function SolicitacaoDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -189,8 +190,8 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                         <div className="flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
                           
                           {/* Info do Prestador */}
-                          <div className="flex items-start gap-4 flex-1">
-                            <div className="h-12 w-12 rounded-full bg-slate-100 border flex items-center justify-center shrink-0 overflow-hidden">
+                          <Link href={`/perfil/${proposal.provider?.id}`} className="flex items-start gap-4 flex-1 hover:opacity-80 transition-opacity cursor-pointer group">
+                            <div className="h-12 w-12 rounded-full bg-slate-100 border flex items-center justify-center shrink-0 overflow-hidden shadow-sm group-hover:ring-2 group-hover:ring-primary/50 transition-all">
                               {proposal.provider?.user?.avatar_url ? (
                                 <img src={proposal.provider.user.avatar_url} alt={providerName} className="h-full w-full object-cover" />
                               ) : (
@@ -198,7 +199,7 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                               )}
                             </div>
                             <div>
-                              <h3 className="font-bold text-lg leading-none">{providerName}</h3>
+                              <h3 className="font-bold text-lg leading-none group-hover:text-primary transition-colors">{providerName}</h3>
                               <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1 font-medium text-amber-500">
                                   <Star className="h-4 w-4 fill-current" />
@@ -214,7 +215,7 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                                 </div>
                               )}
                             </div>
-                          </div>
+                          </Link>
 
                           {/* Preço e Ação */}
                           <div className="flex flex-col md:items-end w-full md:w-auto gap-3 pt-4 md:pt-0 border-t md:border-t-0 mt-4 md:mt-0">
@@ -226,11 +227,25 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                             </div>
 
                             {isAccepted ? (
-                              <Button asChild className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white">
-                                <a href={`https://wa.me/55${providerPhone?.replace(/\D/g, '')}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer">
-                                  Falar no WhatsApp
-                                </a>
-                              </Button>
+                              <>
+                                <Button asChild className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white">
+                                  <a href={`https://wa.me/55${providerPhone?.replace(/\D/g, '')}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer">
+                                    Falar no WhatsApp
+                                  </a>
+                                </Button>
+                                
+                                {request.status === "completed" ? (
+                                  <div className="mt-4 pt-4 border-t w-full text-center">
+                                    <p className="text-sm font-medium text-green-600 flex items-center justify-center gap-1">
+                                      <CheckCircle2 className="h-4 w-4" /> Mudança Finalizada e Avaliada
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div className="w-full">
+                                    <ReviewForm requestId={id} providerId={proposal.provider_id} />
+                                  </div>
+                                )}
+                              </>
                             ) : !hasAccepted && (
                               <form action={acceptProposal} className="w-full">
                                 <input type="hidden" name="proposal_id" value={proposal.id} />

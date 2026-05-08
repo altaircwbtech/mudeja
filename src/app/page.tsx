@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { signOut } from "@/lib/auth-actions";
 import {
   Shield,
   Star,
@@ -18,7 +20,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo, LogoIcon } from "@/components/brand/Logo";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  // Try to figure out user role if logged in
+  let dashboardPath = "/cliente";
+  if (user) {
+    const { data: providerInfo } = await supabase.from("providers").select("id").eq("user_id", user.id).single();
+    if (providerInfo) {
+      dashboardPath = "/prestador";
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -42,16 +56,33 @@ export default function LandingPage() {
             </Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Entrar
-              </Button>
-            </Link>
-            <Link href="/cadastro">
-              <Button size="sm" className="shadow-md shadow-primary/25">
-                Cadastrar grátis
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <form action={signOut}>
+                  <Button variant="ghost" size="sm" type="submit">
+                    Sair
+                  </Button>
+                </form>
+                <Button size="sm" className="shadow-md shadow-primary/25" asChild>
+                  <Link href={dashboardPath}>
+                    Meu Painel
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/login">
+                    Entrar
+                  </Link>
+                </Button>
+                <Button size="sm" className="shadow-md shadow-primary/25" asChild>
+                  <Link href="/cadastro">
+                    Cadastrar grátis
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -86,25 +117,27 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/cadastro">
-                <Button
-                  size="lg"
-                  className="h-13 w-full gap-2 px-8 text-base font-semibold shadow-lg shadow-primary/30 sm:w-auto"
-                >
+              <Button
+                size="lg"
+                className="h-13 w-full gap-2 px-8 text-base font-semibold shadow-lg shadow-primary/30 sm:w-auto"
+                asChild
+              >
+                <Link href="/cadastro">
                   <Search className="h-5 w-5" />
                   Buscar serviço
-                </Button>
-              </Link>
-              <Link href="/cadastro">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="h-13 w-full gap-2 px-8 text-base sm:w-auto"
-                >
-                  <Users className="h-5 w-5" />
-                  Seja um parceiro
-                </Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-13 w-full gap-2 px-8 text-base font-semibold sm:w-auto"
+                asChild
+              >
+                <Link href="/cadastro">
+                  <Truck className="h-5 w-5" />
+                  Seja um motorista
+                </Link>
+              </Button>
             </div>
 
             {/* Social proof */}
