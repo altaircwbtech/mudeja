@@ -251,11 +251,11 @@ export default async function PrestadorDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              { label: "Foto de perfil", done: !!profile.avatar_url },
-              { label: "Verificação de identidade", done: provider?.selfie_verified, href: "/prestador/perfil/verificacao" },
-              { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/perfil/veiculos" },
-              { label: "Área de atendimento", done: (serviceAreas?.length || 0) > 0, href: "/prestador/perfil/areas" },
-              { label: "Fotos de trabalhos", done: hasPhotos, href: "/prestador/perfil/fotos" },
+              { label: "Foto de perfil", done: !!profile.avatar_url, href: "/prestador/perfil" },
+              { label: "Verificação de identidade", done: provider?.selfie_verified, href: "/prestador/perfil" },
+              { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/veiculos" },
+              { label: "Área de atendimento", done: (serviceAreas?.length || 0) > 0, href: "/prestador/perfil" },
+              { label: "Fotos de trabalhos", done: hasPhotos, href: "/prestador/perfil" },
             ].map((item) => {
               const content = (
                 <div

@@ -87,7 +87,7 @@ export async function submitProposal(formData: FormData) {
 
   // Create notification for the client
   try {
-    const { createNotification } = await import("@/lib/notification-actions");
+    const { createNotification } = await import("./notification-actions");
     const providerName = (providerData as any).users?.full_name || "Um motorista";
     await createNotification({
       userId: request.user_id,
@@ -188,7 +188,7 @@ export async function acceptProposal(formData: FormData) {
 
   // Notify the accepted provider
   try {
-    const { createNotification } = await import("@/lib/notification-actions");
+    const { createNotification } = await import("./notification-actions");
 
     // Get the provider's user_id
     const { data: providerUser } = await supabase

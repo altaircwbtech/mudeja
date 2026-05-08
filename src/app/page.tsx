@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo, LogoIcon } from "@/components/brand/Logo";
+import HeroSearchClient from "./HeroSearchClient";
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -47,11 +48,11 @@ export default async function LandingPage() {
           </Link>
           
           <div className="hidden items-center gap-8 md:flex">
+            <Link href="/explorar" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5">
+              <Search className="h-4 w-4" /> Explorar Profissionais
+            </Link>
             <Link href="#como-funciona" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Como funciona
-            </Link>
-            <Link href="#servicos" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Serviços
             </Link>
             <Link href="/cadastro" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               Seja um parceiro
@@ -104,31 +105,26 @@ export default async function LandingPage() {
                 </Badge>
                 
                 <h1 className="mb-6 text-4xl font-black tracking-tight text-foreground sm:text-5xl lg:text-6xl lg:leading-[1.1]">
-                  Sua mudança sem o peso da{" "}
+                  Sua mudança com{" "}
                   <span className="relative inline-block text-primary">
-                    dor de cabeça
+                    segurança real
                     <svg className="absolute -bottom-2 left-0 h-3 w-full text-primary/30" viewBox="0 0 100 10" preserveAspectRatio="none">
                       <path d="M0 5 Q 25 0 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
                     </svg>
                   </span>
+                  {" "}e preço justo
                 </h1>
 
-                <p className="mb-10 text-lg leading-relaxed text-muted-foreground md:text-xl">
-                  Conectamos você aos melhores motoristas e ajudantes da região. 
-                  Compare orçamentos em tempo real, veja avaliações e combine tudo direto pelo WhatsApp.
+                <p className="mb-10 text-lg leading-relaxed text-muted-foreground md:text-xl max-w-xl">
+                  Encontre motoristas verificados por nossa auditoria humana. Compare orçamentos, veja o <strong>Trust Score</strong> e feche sua mudança em minutos.
                 </p>
 
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <Button size="lg" className="h-14 px-8 text-lg font-bold shadow-xl shadow-primary/30 group" asChild>
-                    <Link href="/cadastro">
-                      Solicitar Orçamento
-                      <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="lg" className="h-14 px-8 text-lg font-bold" asChild>
-                    <Link href="/cadastro">Sou Motorista</Link>
-                  </Button>
-                </div>
+                <HeroSearchClient />
+
+                <p className="mt-4 px-6 text-xs text-slate-400 flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-green-500" />
+                  Auditoria humana de documentos ativa para 100% dos parceiros.
+                </p>
 
                 <div className="mt-12 flex items-center gap-6">
                   <div className="flex -space-x-3">

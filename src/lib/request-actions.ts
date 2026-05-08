@@ -49,14 +49,50 @@ export async function createRequest(formData: FormData) {
     description,
   };
 
-  const { error } = await supabase.from("service_requests").insert(payload);
+  const { data: requestData, error } = await supabase
+    .from("service_requests")
+    .insert(payload)
+    .select("id")
+    .single();
 
   if (error) {
     console.error("Error creating request:", error);
     return { error: "Ocorreu um erro ao criar a solicitação. Tente novamente." };
   }
 
+  // Notify matching providers in the region
+  try {
+    const { createNotification } = await import("./notification-actions");
+    const originCity = formData.get("origin_city") as string;
+    const originState = formData.get("origin_state") as string;
+
+    // Find all providers serving this city
+    const { data: providers } = await supabase
+      .from("provider_service_areas")
+      .select("provider_id, providers(user_id)")
+      .eq("city", originCity)
+      .eq("state", originState);
+
+    if (providers && providers.length > 0) {
+      // Send notification to each unique provider user
+      const userIds = Array.from(new Set(providers.map(p => (p.providers as any)?.user_id).filter(Boolean)));
+      
+      await Promise.all(userIds.map(userId => 
+        createNotification({
+          userId: userId as string,
+          title: "Nova oportunidade! 🚚",
+          message: `Uma nova mudança de ${formData.get("origin_neighborhood")} para ${formData.get("dest_neighborhood")} foi publicada.`,
+          type: "new_opportunity",
+          actionUrl: `/prestador/oportunidade/${requestData.id}`,
+        })
+      ));
+    }
+  } catch (err) {
+    console.error("Failed to notify providers:", err);
+  }
+
   revalidatePath("/cliente");
+  revalidatePath("/prestador");
   return { success: true };
 }
 

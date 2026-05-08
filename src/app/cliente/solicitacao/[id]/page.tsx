@@ -19,7 +19,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/brand/Logo";
 import { acceptProposal } from "@/lib/proposal-actions";
-import ReviewForm from "./review-form";
 
 export default async function SolicitacaoDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -203,10 +202,10 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                               <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                                 <span className="flex items-center gap-1 font-medium text-amber-500">
                                   <Star className="h-4 w-4 fill-current" />
-                                  {proposal.provider?.avg_rating || "Novo"}
+                                  {proposal.provider?.avg_rating && proposal.provider.avg_rating > 0 ? proposal.provider.avg_rating : "Novo"}
                                 </span>
                                 {proposal.provider?.total_reviews > 0 && (
-                                  <span>({proposal.provider.total_reviews} avaliações)</span>
+                                  <span>({proposal.provider.total_reviews} {proposal.provider.total_reviews === 1 ? 'avaliação' : 'avaliações'})</span>
                                 )}
                               </div>
                               {proposal.message && (
@@ -227,30 +226,32 @@ export default async function SolicitacaoDetailsPage(props: { params: Promise<{ 
                             </div>
 
                             {isAccepted ? (
-                              <>
-                                <Button asChild className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white">
+                              <div className="flex flex-col gap-2 w-full min-w-[200px]">
+                                <Button asChild className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white h-12 rounded-xl shadow-lg shadow-green-500/20">
                                   <a href={`https://wa.me/55${providerPhone?.replace(/\D/g, '')}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer">
                                     Falar no WhatsApp
                                   </a>
                                 </Button>
                                 
                                 {request.status === "completed" ? (
-                                  <div className="mt-4 pt-4 border-t w-full text-center">
-                                    <p className="text-sm font-medium text-green-600 flex items-center justify-center gap-1">
-                                      <CheckCircle2 className="h-4 w-4" /> Mudança Finalizada e Avaliada
+                                  <div className="mt-2 py-2 px-3 bg-green-50 rounded-lg text-center border border-green-100">
+                                    <p className="text-xs font-bold text-green-700 flex items-center justify-center gap-1">
+                                      <CheckCircle2 className="h-3.5 w-3.5" /> MUDANÇA CONCLUÍDA
                                     </p>
                                   </div>
                                 ) : (
-                                  <div className="w-full">
-                                    <ReviewForm requestId={id} providerId={proposal.provider_id} />
-                                  </div>
+                                  <Button asChild variant="outline" className="w-full h-12 border-primary text-primary hover:bg-primary/5 rounded-xl border-2">
+                                    <Link href={`/cliente/solicitacao/${id}/avaliar`}>
+                                      Concluir e Avaliar
+                                    </Link>
+                                  </Button>
                                 )}
-                              </>
+                              </div>
                             ) : !hasAccepted && (
                               <form action={acceptProposal} className="w-full">
                                 <input type="hidden" name="proposal_id" value={proposal.id} />
                                 <input type="hidden" name="request_id" value={id} />
-                                <Button type="submit" className="w-full shadow-md font-semibold">
+                                <Button type="submit" className="w-full h-12 rounded-xl shadow-md font-bold text-base transition-all active:scale-95">
                                   Aceitar Oferta
                                 </Button>
                               </form>

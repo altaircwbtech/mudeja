@@ -15,6 +15,7 @@ import {
   LogOut,
   User,
   MapPin,
+  Truck,
 } from "lucide-react";
 
 export default async function ClienteDashboard() {
@@ -33,10 +34,17 @@ export default async function ClienteDashboard() {
 
   if (!profile) redirect("/onboarding");
 
-  // Fetch client requests
+  // Fetch client requests with reviews check and provider info
   const { data: requests } = await supabase
     .from("service_requests")
-    .select("*")
+    .select(`
+      *,
+      reviews (id),
+      provider:providers!matched_provider_id (
+        business_name,
+        user:users!user_id (full_name)
+      )
+    `)
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -91,19 +99,21 @@ export default async function ClienteDashboard() {
             </Card>
           </Link>
 
-          <Card className="group cursor-pointer transition-all hover:shadow-md">
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-                <Search className="h-7 w-7" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Buscar profissional</h3>
-                <p className="text-sm text-muted-foreground">
-                  Veja perfis de motoristas e ajudantes
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/explorar">
+            <Card className="group h-full cursor-pointer transition-all hover:border-primary hover:shadow-md">
+              <CardContent className="flex items-center gap-4 p-6">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                  <Search className="h-7 w-7" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Buscar profissional</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Veja perfis de motoristas e ajudantes
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Stats */}
@@ -112,7 +122,7 @@ export default async function ClienteDashboard() {
           <div className="grid grid-cols-3 gap-4">
             {[
               { icon: ClipboardList, label: "Solicitações", value: activeRequestsCount.toString() },
-              { icon: Star, label: "Avaliações", value: "0" },
+              { icon: Star, label: "Avaliações", value: requests?.filter(r => r.reviews?.length > 0).length.toString() || "0" },
               { icon: MapPin, label: "Cidade", value: profile.city || "—" },
             ].map((stat) => (
               <Card key={stat.label}>
@@ -151,13 +161,15 @@ export default async function ClienteDashboard() {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {requests?.slice(0, 3).map((req) => (
-                <Link href={`/cliente/solicitacao/${req.id}`} key={req.id} className="block transition-transform hover:-translate-y-1">
-                  <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer">
-                    <div className="border-l-4 border-primary">
+              {requests?.slice(0, 5).map((req: any) => {
+                const needsReview = req.status === "completed" && (!req.reviews || req.reviews.length === 0);
+                
+                return (
+                  <Card key={req.id} className={`overflow-hidden hover:shadow-md transition-shadow ${needsReview ? 'border-primary ring-1 ring-primary/20 bg-primary/5' : ''}`}>
+                    <div className={`border-l-4 ${needsReview ? 'border-amber-500' : 'border-primary'}`}>
                       <CardContent className="p-5">
-                        <div className="flex items-start justify-between">
-                          <div>
+                        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                          <div className="flex-1">
                             <div className="flex items-center gap-2">
                               {(() => {
                                 let badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-200 border-none";
@@ -193,28 +205,68 @@ export default async function ClienteDashboard() {
                             <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                               <MapPin className="h-4 w-4" /> {req.origin_city} → {req.destination_city || req.dest_city}
                             </p>
+                            
+                            {req.provider && (
+                                <p className="mt-2 text-xs font-medium text-slate-500">
+                                    Motorista: <span className="text-slate-900">{req.provider.business_name || req.provider.user?.[0]?.full_name}</span>
+                                </p>
+                            )}
                           </div>
-                          <div className="text-right flex flex-col items-end">
-                            <div className={`text-2xl font-bold ${req.total_proposals > 0 ? 'text-green-600' : 'text-primary'}`}>{req.total_proposals || 0}</div>
-                            <div className="text-xs text-muted-foreground font-medium">propostas</div>
-                            {req.total_proposals > 0 && (
-                              <div className="mt-2 text-xs text-primary font-semibold flex items-center gap-1">
-                                Ver propostas &rarr;
-                              </div>
+                          
+                          <div className="w-full sm:w-auto flex flex-col items-end gap-2">
+                            {!needsReview && (
+                              <>
+                                <div className={`text-2xl font-bold ${req.total_proposals > 0 ? 'text-green-600' : 'text-primary'}`}>{req.total_proposals || 0}</div>
+                                <div className="text-xs text-muted-foreground font-medium">propostas</div>
+                                <Link href={`/cliente/solicitacao/${req.id}`}>
+                                    <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
+                                        Ver Detalhes
+                                    </Button>
+                                </Link>
+                              </>
+                            )}
+                            
+                            {needsReview && (
+                                <Link href={`/cliente/avaliar/${req.id}`} className="w-full">
+                                    <Button className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold gap-2 shadow-lg shadow-amber-500/20">
+                                        <Star className="h-4 w-4 fill-current" /> Avaliar Agora
+                                    </Button>
+                                </Link>
                             )}
                           </div>
                         </div>
                       </CardContent>
                     </div>
                   </Card>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
 
+        {/* Explore CTA */}
+        <div className="mt-8 mb-4">
+           <Card className="bg-gradient-to-r from-slate-900 to-slate-800 text-white border-none shadow-xl overflow-hidden relative group">
+              <div className="absolute top-0 right-0 h-32 w-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-all duration-500" />
+              <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-6 relative z-10">
+                 <div className="h-16 w-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm shadow-inner shrink-0">
+                    <Truck className="h-8 w-8 text-primary" />
+                 </div>
+                 <div className="flex-1 text-center sm:text-left">
+                    <h3 className="text-lg font-bold">Conheça nossos Motoristas Elite</h3>
+                    <p className="text-slate-400 text-sm mt-1">Veja os profissionais com as melhores avaliações e Trust Score da sua região.</p>
+                 </div>
+                 <Link href="/explorar">
+                    <Button className="font-bold h-12 px-8 rounded-xl shadow-lg shadow-primary/20 transition-transform active:scale-95">
+                       Explorar Diretório
+                    </Button>
+                 </Link>
+              </CardContent>
+           </Card>
+        </div>
+
         {/* Profile card */}
-        <Card>
+        <Card className="mb-8">
           <CardHeader className="pb-3">
             <h2 className="text-lg font-semibold">Meu perfil</h2>
           </CardHeader>
