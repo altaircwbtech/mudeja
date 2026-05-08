@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { signOut } from "@/lib/auth-actions";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,22 @@ export default async function PrestadorDashboard() {
     .eq("user_id", user.id)
     .single();
 
+  // Fetch proposals sent by this provider
+  const { data: myProposals } = await supabase
+    .from("proposals")
+    .select("request_id")
+    .eq("provider_id", provider?.id);
+
+  const sentRequestIds = new Set(myProposals?.map((p) => p.request_id) || []);
+
+  // Fetch available opportunities (published requests)
+  const { data: opportunities } = await supabase
+    .from("service_requests")
+    .select("*")
+    .in("status", ["published", "receiving_proposals"])
+    .order("created_at", { ascending: false })
+    .limit(10);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -52,7 +69,7 @@ export default async function PrestadorDashboard() {
               Parceiro
             </Badge>
             <form action={signOut}>
-              <Button variant="ghost" size="sm">
+              <Button type="submit" variant="ghost" size="sm">
                 <LogOut className="h-4 w-4" />
               </Button>
             </form>
@@ -74,7 +91,7 @@ export default async function PrestadorDashboard() {
         {/* Stats */}
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { icon: ClipboardList, label: "Propostas", value: provider?.total_completed || 0 },
+            { icon: ClipboardList, label: "Propostas", value: myProposals?.length || 0 },
             { icon: Star, label: "Avaliação", value: provider?.avg_rating || "—" },
             { icon: TrendingUp, label: "Taxa resp.", value: `${provider?.response_rate || 0}%` },
             { icon: Zap, label: "Trust Score", value: provider?.trust_score || "0.0" },
@@ -89,29 +106,88 @@ export default async function PrestadorDashboard() {
           ))}
         </div>
 
-        {/* Opportunities placeholder */}
-        <Card className="mb-8">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Oportunidades perto de você</h2>
-              <Badge variant="secondary" className="text-xs gap-1">
-                <MapPin className="h-3 w-3" />
-                {profile.city}
-              </Badge>
+        {/* Opportunities list */}
+        <div className="mb-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              Oportunidades na sua região
+            </h2>
+            <Badge variant="secondary" className="text-xs">
+              {opportunities?.length || 0} novas
+            </Badge>
+          </div>
+
+          {!opportunities || opportunities.length === 0 ? (
+            <Card>
+              <CardContent>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
+                    <Bell className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="mb-1 font-semibold">Nenhuma oportunidade no momento</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Quando clientes solicitarem serviços na sua região, você verá aqui.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4">
+              {opportunities.map((opp) => (
+                <Card key={opp.id} className="overflow-hidden transition-all hover:border-primary/50 hover:shadow-md cursor-pointer group">
+                  <div className="border-l-4 border-orange-500">
+                    <CardContent className="p-5">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                              {opp.service_type === 'mudanca_residencial' ? 'Mudança' : 'Frete'}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              Criado hoje
+                            </span>
+                          </div>
+                          <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">{opp.title}</h3>
+                          
+                          <div className="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="h-4 w-4 shrink-0" />
+                              <span className="truncate">{opp.origin_city} → {opp.destination_city || opp.dest_city}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Truck className="h-4 w-4 shrink-0" />
+                              Tamanho: <strong className="text-foreground capitalize">{opp.move_size || 'Não especificado'}</strong>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-end justify-between h-full space-y-4">
+                          {sentRequestIds.has(opp.id) ? (
+                            <Button asChild size="sm" variant="secondary" className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200 z-10 relative">
+                              <Link href={`/prestador/oportunidade/${opp.id}`}>
+                                Oferta Enviada ✓
+                              </Link>
+                            </Button>
+                          ) : (
+                            <Button asChild size="sm" className="shadow-sm z-10 relative">
+                              <Link href={`/prestador/oportunidade/${opp.id}`}>
+                                Ver Detalhes
+                              </Link>
+                            </Button>
+                          )}
+                          <div className="text-xs text-muted-foreground font-medium">
+                            {opp.total_proposals || 0} proposta(s)
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </div>
+                </Card>
+              ))}
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
-                <Bell className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="mb-1 font-semibold">Nenhuma oportunidade no momento</h3>
-              <p className="text-sm text-muted-foreground">
-                Quando clientes solicitarem serviços na sua região, você verá aqui.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
 
         {/* Profile completeness */}
         <Card>

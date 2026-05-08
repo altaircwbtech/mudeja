@@ -1,0 +1,61 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+
+export async function createRequest(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Usuário não autenticado." };
+  }
+
+  const service_type = formData.get("service_type") as string;
+  const move_size = formData.get("move_size") as string;
+  const description = formData.get("description") as string;
+
+  // Title generation logic
+  let typeLabel = "Mudança";
+  if (service_type === "carreto") typeLabel = "Carreto";
+  if (service_type === "frete_pequeno") typeLabel = "Frete";
+  
+  const title = `${typeLabel} de ${formData.get("origin_neighborhood")} para ${formData.get("dest_neighborhood")}`;
+
+  const payload = {
+    user_id: user.id,
+    title,
+    service_type,
+    move_size: move_size || null,
+    status: "published", // Publish immediately for the MVP
+    
+    origin_address: `${formData.get("origin_neighborhood")}, ${formData.get("origin_city")} - ${formData.get("origin_state")}`,
+    origin_city: formData.get("origin_city"),
+    origin_state: formData.get("origin_state"),
+    origin_neighborhood: formData.get("origin_neighborhood"),
+    origin_has_elevator: formData.get("origin_has_elevator") === "true",
+    
+    destination_city: formData.get("dest_city"),
+    destination_state: formData.get("dest_state"),
+    destination_neighborhood: formData.get("dest_neighborhood"),
+    destination_has_elevator: formData.get("dest_has_elevator") === "true",
+    
+    preferred_date: formData.get("desired_date"),
+    flexible_date: formData.get("is_date_flexible") === "true",
+    
+    needs_packing: formData.get("needs_packing") === "true",
+    needs_disassembly: formData.get("needs_assembly") === "true",
+    
+    description,
+  };
+
+  const { error } = await supabase.from("service_requests").insert(payload);
+
+  if (error) {
+    console.error("Error creating request:", error);
+    return { error: "Ocorreu um erro ao criar a solicitação. Tente novamente." };
+  }
+
+  revalidatePath("/cliente");
+  return { success: true };
+}

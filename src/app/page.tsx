@@ -35,7 +35,7 @@ export default function LandingPage() {
               Como funciona
             </Link>
             <Link
-              href="/para-prestadores"
+              href="/cadastro"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Seja um parceiro
@@ -95,7 +95,7 @@ export default function LandingPage() {
                   Buscar serviço
                 </Button>
               </Link>
-              <Link href="/para-prestadores">
+              <Link href="/cadastro">
                 <Button
                   variant="outline"
                   size="lg"
