@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Image as ImageIcon, ChevronLeft, Upload, Trash2, Plus, Camera, Loader2, X } from "lucide-react";
 import { uploadPhotoAction, removePhotoAction } from "./actions";
 
@@ -31,15 +32,28 @@ export default function ProviderPhotosPage({
     }
   }
 
-  async function handleUpload(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log("🖱️ Formulário enviado! Processando...");
+    
+    const formData = new FormData(e.currentTarget);
+    
     startTransition(async () => {
-      const result = await uploadPhotoAction(formData, providerId, photos.length);
-      if (result.success && result.photo) {
-        setPhotos([result.photo, ...photos]);
-        setPreview(null);
-        setCaption("");
-      } else {
-        alert(result.error || "Erro ao subir imagem. Verifique se criou o bucket 'trabalhos' no Supabase.");
+      try {
+        const result = await uploadPhotoAction(formData, providerId, photos.length);
+        console.log("📡 Resposta do servidor:", result);
+        
+        if (result.success && result.photo) {
+          setPhotos([result.photo, ...photos]);
+          setPreview(null);
+          setCaption("");
+          alert("✅ Foto adicionada com sucesso!");
+        } else {
+          alert(result.error || "Erro desconhecido ao subir imagem.");
+        }
+      } catch (err) {
+        console.error("❌ Erro ao chamar Action:", err);
+        alert("Erro de conexão com o servidor.");
       }
     });
   }
@@ -85,39 +99,48 @@ export default function ProviderPhotosPage({
             <CardDescription>Formatos aceitos: JPG, PNG. Máximo 5MB.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={handleUpload} className="space-y-4">
-              {preview ? (
-                <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted">
-                  <img src={preview} alt="Preview" className="h-full w-full object-cover" />
-                  <Button 
-                    type="button" 
-                    variant="destructive" 
-                    size="icon" 
-                    className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-lg"
-                    onClick={() => setPreview(null)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                <div className="relative group border-2 border-dashed rounded-2xl p-8 text-center hover:border-primary hover:bg-primary/5 transition-all">
-                  <input 
-                    type="file" 
-                    name="photo" 
-                    accept="image/*" 
-                    onChange={handleFileChange}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    required
-                  />
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 text-primary group-hover:scale-110 transition-transform">
-                      <Camera className="h-6 w-6" />
-                    </div>
-                    <p className="text-sm font-bold">Toque para tirar foto ou escolher arquivo</p>
-                    <p className="text-xs text-muted-foreground mt-1">Sua foto aparecerá aqui antes de enviar</p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="relative">
+                {/* O input fica sempre aqui para o FormData capturar */}
+                <input 
+                  type="file" 
+                  name="photo" 
+                  accept="image/*" 
+                  onChange={handleFileChange}
+                  className={`absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 ${preview ? 'pointer-events-none' : ''}`}
+                  required={!preview}
+                />
+
+                {preview ? (
+                  <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-primary/20 bg-muted">
+                    <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+                    <Button 
+                      type="button" 
+                      variant="destructive" 
+                      size="icon" 
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-lg z-20"
+                      onClick={() => {
+                        setPreview(null);
+                        // Limpa o input
+                        const el = document.getElementsByName('photo')[0] as HTMLInputElement;
+                        if (el) el.value = '';
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="relative group border-2 border-dashed rounded-2xl p-8 text-center hover:border-primary hover:bg-primary/5 transition-all">
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 text-primary group-hover:scale-110 transition-transform">
+                        <Camera className="h-6 w-6" />
+                      </div>
+                      <p className="text-sm font-bold">Toque para tirar foto ou escolher arquivo</p>
+                      <p className="text-xs text-muted-foreground mt-1">Sua foto aparecerá aqui antes de enviar</p>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <input 
                 type="text" 
