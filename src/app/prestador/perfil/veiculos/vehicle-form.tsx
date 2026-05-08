@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import { addVehicle } from "@/lib/vehicle-actions";
 
 export function VehicleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,6 +21,7 @@ export function VehicleForm() {
       await addVehicle(formData);
       toast.success("Veículo cadastrado!", { description: "Seu veículo foi salvo com sucesso." });
       (e.target as HTMLFormElement).reset();
+      router.refresh();
     } catch (err: any) {
       toast.error("Erro ao salvar", { description: err.message });
     } finally {

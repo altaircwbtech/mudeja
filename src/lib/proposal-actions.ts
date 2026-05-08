@@ -29,7 +29,7 @@ export async function submitProposal(formData: FormData) {
   // Buscar o ID do provedor
   const { data: providerData } = await supabase
     .from("providers")
-    .select("id")
+    .select("id, users(full_name)")
     .eq("user_id", user.id)
     .single();
 
@@ -47,6 +47,17 @@ export async function submitProposal(formData: FormData) {
 
   if (isNaN(amount) || amount <= 0) {
     throw new Error(`Valor da proposta inválido: ${amountStr}`);
+  }
+
+  // Fetch the service request to get the client's user_id
+  const { data: request } = await supabase
+    .from("service_requests")
+    .select("id, user_id, title")
+    .eq("id", requestId)
+    .single();
+
+  if (!request) {
+    throw new Error("Solicitação não encontrada");
   }
 
   // Check if a proposal already exists
@@ -72,6 +83,21 @@ export async function submitProposal(formData: FormData) {
   if (error) {
     console.error("Erro ao enviar proposta:", error);
     throw new Error(`Erro do Supabase: ${error.message} - Detalhes: ${error.details || ''}`);
+  }
+
+  // Create notification for the client
+  try {
+    const { createNotification } = await import("@/lib/notification-actions");
+    const providerName = (providerData as any).users?.full_name || "Um motorista";
+    await createNotification({
+      userId: request.user_id,
+      title: "Nova proposta recebida! 🚀",
+      message: `${providerName} enviou uma oferta de R$ ${amount.toFixed(2).replace('.', ',')} para a sua solicitação.`,
+      type: "proposal_received",
+      actionUrl: `/cliente/solicitacao/${requestId}`,
+    });
+  } catch (err) {
+    console.error("Failed to create notification:", err);
   }
 
   revalidatePath("/prestador");
@@ -159,6 +185,30 @@ export async function acceptProposal(formData: FormData) {
     .update({ status: "rejected", rejected_at: new Date().toISOString() })
     .eq("request_id", requestId)
     .neq("id", proposalId);
+
+  // Notify the accepted provider
+  try {
+    const { createNotification } = await import("@/lib/notification-actions");
+
+    // Get the provider's user_id
+    const { data: providerUser } = await supabase
+      .from("providers")
+      .select("user_id")
+      .eq("id", proposal.provider_id)
+      .single();
+
+    if (providerUser) {
+      await createNotification({
+        userId: providerUser.user_id,
+        title: "Proposta aceita! 🎉",
+        message: "Um cliente aceitou a sua proposta. Você já pode entrar em contato!",
+        type: "proposal_accepted",
+        actionUrl: `/prestador/propostas`,
+      });
+    }
+  } catch (err) {
+    console.error("Failed to create notification:", err);
+  }
 
   revalidatePath("/cliente");
   revalidatePath(`/cliente/solicitacao/${requestId}`);

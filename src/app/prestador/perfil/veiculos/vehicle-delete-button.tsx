@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { deleteVehicle } from "@/lib/vehicle-actions";
 
 export function VehicleDeleteButton({ vehicleId }: { vehicleId: string }) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
   async function handleDelete() {
     if (!confirm("Tem certeza que deseja excluir este veículo?")) return;
@@ -16,6 +18,7 @@ export function VehicleDeleteButton({ vehicleId }: { vehicleId: string }) {
     try {
       await deleteVehicle(vehicleId);
       toast.success("Veículo excluído");
+      router.refresh();
     } catch (err: any) {
       toast.error("Erro ao excluir", { description: err.message });
     } finally {

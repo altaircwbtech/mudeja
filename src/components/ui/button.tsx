@@ -49,12 +49,15 @@ function Button({
   children,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
+  const isCustomRender = asChild && React.isValidElement(children);
+  
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      render={asChild && React.isValidElement(children) ? children : undefined}
-      {...(asChild && React.isValidElement(children) ? {} : { children })}
+      render={isCustomRender ? children : undefined}
+      nativeButton={isCustomRender ? false : undefined}
+      {...(isCustomRender ? {} : { children })}
       {...props}
     />
   )

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/auth-actions";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/notification-bell";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -73,10 +74,11 @@ export default async function PrestadorDashboard() {
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="text-xs gap-1">
+            <Badge variant="secondary" className="text-xs gap-1 hidden sm:flex">
               <Truck className="h-3 w-3" />
               Parceiro
             </Badge>
+            <NotificationBell />
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="sm">
                 <LogOut className="h-4 w-4" />

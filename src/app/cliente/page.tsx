@@ -6,6 +6,7 @@ import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { NotificationBell } from "@/components/notification-bell";
 import {
   Search,
   Plus,
@@ -48,9 +49,10 @@ export default async function ClienteDashboard() {
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">
-              {profile.full_name}
+            <span className="text-sm text-muted-foreground hidden sm:inline-block">
+              {profile.full_name?.split(" ")[0]}
             </span>
+            <NotificationBell />
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="sm">
                 <LogOut className="h-4 w-4" />
