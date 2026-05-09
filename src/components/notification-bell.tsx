@@ -17,6 +17,8 @@ import {
 import { getNotifications, getUnreadNotificationsCount, markAsRead, markAllAsRead } from "@/lib/notification-actions";
 import { createClient } from "@/lib/supabase/client";
 
+import { toast } from "sonner";
+
 interface Notification {
   id: string;
   title: string;
@@ -32,26 +34,46 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
+    // Get current user ID
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user) setCurrentUserId(data.user.id);
+    });
+
     // Initial fetch of unread count
     fetchUnreadCount();
 
     // Subscribe to realtime notifications
     const channel = supabase
-      .channel("custom-all-channel")
+      .channel("notifications-realtime")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
+        (payload: any) => {
           // Check if notification is for the current user
-          // Unfortunately we can't easily check auth.uid() in client without fetching, 
-          // but we can just refetch the count when an insert happens.
-          fetchUnreadCount();
-          if (isOpen) {
-            fetchNotifications();
+          if (currentUserId && payload.new.user_id === currentUserId) {
+            fetchUnreadCount();
+            if (isOpen) {
+              fetchNotifications();
+            }
+
+            // Show toast
+            toast(payload.new.title, {
+              description: payload.new.message,
+              action: payload.new.action_url ? {
+                label: "Ver",
+                onClick: () => {
+                   if (payload.new.action_url) {
+                     setIsOpen(false);
+                     router.push(payload.new.action_url);
+                   }
+                }
+              } : undefined,
+            });
           }
         }
       )
@@ -60,7 +82,7 @@ export function NotificationBell() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isOpen]);
+  }, [isOpen, currentUserId]);
 
   async function fetchUnreadCount() {
     const count = await getUnreadNotificationsCount();

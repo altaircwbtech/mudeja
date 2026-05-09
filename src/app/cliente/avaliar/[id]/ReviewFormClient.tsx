@@ -5,7 +5,7 @@ import { Star, Send, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { submitReview } from "./actions";
+import { submitReview } from "@/lib/review-actions";
 import { useRouter } from "next/navigation";
 
 interface ReviewFormProps {

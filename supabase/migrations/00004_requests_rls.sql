@@ -10,12 +10,10 @@ ALTER TABLE proposals ENABLE ROW LEVEL SECURITY;
 -- Requests Policies
 -- --------------------------------------------------------
 
--- 1. Clients can create requests
-CREATE POLICY "Clients can create requests"
+-- 1. Authenticated users can create requests
+CREATE POLICY "Authenticated users can create requests"
 ON service_requests FOR INSERT
-WITH CHECK (auth.uid() = user_id AND EXISTS (
-  SELECT 1 FROM users WHERE id = auth.uid() AND role = 'client'
-));
+WITH CHECK (auth.uid() = user_id);
 
 -- 2. Clients can view their own requests
 CREATE POLICY "Clients can view own requests"

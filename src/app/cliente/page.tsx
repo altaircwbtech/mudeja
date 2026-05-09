@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "@/lib/auth-actions";
 import { Logo } from "@/components/brand/Logo";
+import { ProfileSwitcher } from "@/components/profile-switcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,20 +35,34 @@ export default async function ClienteDashboard() {
 
   if (!profile) redirect("/onboarding");
 
-  // Fetch client requests with reviews check and provider info
-  const { data: requests } = await supabase
+  // Fetch client requests
+  const { data: requests, error: fetchError } = await supabase
     .from("service_requests")
     .select(`
       *,
       reviews (id),
-      provider:providers!matched_provider_id (
+      provider:providers!chosen_provider_id(
         business_name,
-        user:users!user_id (full_name)
+        user:users(full_name, phone)
       )
     `)
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
+  if (fetchError) {
+    console.error("Error fetching requests:", fetchError);
+  }
+
+  console.log(`Found ${requests?.length || 0} requests for user ${user.id}`);
+
+  // Check if user is also a provider
+  const { data: providerInfo } = await supabase
+    .from("providers")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
+
+  const isProvider = !!providerInfo;
   const activeRequestsCount = requests?.length || 0;
 
   return (
@@ -57,9 +72,7 @@ export default async function ClienteDashboard() {
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground hidden sm:inline-block">
-              {profile.full_name?.split(" ")[0]}
-            </span>
+            <ProfileSwitcher isProvider={isProvider} userName={profile.full_name} />
             <NotificationBell />
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="sm">
@@ -214,13 +227,32 @@ export default async function ClienteDashboard() {
                           </div>
                           
                           <div className="w-full sm:w-auto flex flex-col items-end gap-2">
-                            {!needsReview && (
+                            {req.status === "matched" && req.provider && (
+                              <>
+                                <Link 
+                                  href={`https://wa.me/55${(req.provider.user as any)?.phone?.replace(/\D/g, "")}`} 
+                                  target="_blank"
+                                  className="w-full"
+                                >
+                                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold gap-2">
+                                    <MessageSquare className="h-4 w-4" /> WhatsApp
+                                  </Button>
+                                </Link>
+                                <Link href={`/cliente/solicitacao/${req.id}/propostas`} className="w-full">
+                                    <Button variant="ghost" size="sm" className="w-full text-xs">
+                                        Ver Detalhes
+                                    </Button>
+                                </Link>
+                              </>
+                            )}
+
+                            {req.status !== "matched" && !needsReview && (
                               <>
                                 <div className={`text-2xl font-bold ${req.total_proposals > 0 ? 'text-green-600' : 'text-primary'}`}>{req.total_proposals || 0}</div>
                                 <div className="text-xs text-muted-foreground font-medium">propostas</div>
-                                <Link href={`/cliente/solicitacao/${req.id}`}>
+                                <Link href={`/cliente/solicitacao/${req.id}/propostas`}>
                                     <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
-                                        Ver Detalhes
+                                        Ver Propostas
                                     </Button>
                                 </Link>
                               </>

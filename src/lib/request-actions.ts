@@ -27,27 +27,38 @@ export async function createRequest(formData: FormData) {
     title,
     service_type,
     move_size: move_size || null,
-    status: "published", // Publish immediately for the MVP
+    status: "published",
     
     origin_address: `${formData.get("origin_neighborhood")}, ${formData.get("origin_city")} - ${formData.get("origin_state")}`,
     origin_city: formData.get("origin_city"),
     origin_state: formData.get("origin_state"),
     origin_neighborhood: formData.get("origin_neighborhood"),
     origin_has_elevator: formData.get("origin_has_elevator") === "true",
-    
+    origin_floor: parseInt(formData.get("origin_floor") as string) || 0,
+    origin_residence_type: formData.get("origin_residence_type") || "casa",
+
+    destination_address: `${formData.get("dest_neighborhood") || ""}, ${formData.get("dest_city") || ""} - ${formData.get("dest_state") || ""}`,
     destination_city: formData.get("dest_city"),
     destination_state: formData.get("dest_state"),
     destination_neighborhood: formData.get("dest_neighborhood"),
     destination_has_elevator: formData.get("dest_has_elevator") === "true",
+    destination_floor: parseInt(formData.get("dest_floor") as string) || 0,
+    destination_residence_type: formData.get("dest_residence_type") || "casa",
     
-    preferred_date: formData.get("desired_date"),
+    preferred_date: formData.get("desired_date") || null,
     flexible_date: formData.get("is_date_flexible") === "true",
     
     needs_packing: formData.get("needs_packing") === "true",
     needs_disassembly: formData.get("needs_assembly") === "true",
+    needs_helper: formData.get("needs_helper") === "true",
+
+    client_has_helpers: formData.get("client_has_helpers") === "true",
+    client_helpers_count: parseInt(formData.get("client_helpers_count") as string) || 0,
     
     description,
   };
+
+  console.log("Creating request with payload:", JSON.stringify(payload, null, 2));
 
   const { data: requestData, error } = await supabase
     .from("service_requests")
@@ -56,8 +67,31 @@ export async function createRequest(formData: FormData) {
     .single();
 
   if (error) {
-    console.error("Error creating request:", error);
-    return { error: "Ocorreu um erro ao criar a solicitação. Tente novamente." };
+    console.error("Supabase Error creating request:", error);
+    return { error: `Erro ao criar solicitação: ${error.message}` };
+  }
+
+  // Insert inventory items if provided
+  const itemsJson = formData.get("items") as string;
+  if (itemsJson) {
+    try {
+      const items = JSON.parse(itemsJson);
+      if (Array.isArray(items) && items.length > 0) {
+        const { error: itemsError } = await supabase.from("request_items").insert(
+          items.map((item: any) => ({
+            request_id: requestData.id,
+            name: item.name,
+            quantity: item.quantity || 1,
+            needs_disassembly: item.needs_disassembly || false,
+            is_fragile: item.is_fragile || false,
+            notes: item.notes || null,
+          }))
+        );
+        if (itemsError) console.error("Error inserting items:", itemsError);
+      }
+    } catch (parseError) {
+      console.error("Error parsing items JSON:", parseError);
+    }
   }
 
   // Notify matching providers in the region
@@ -96,45 +130,4 @@ export async function createRequest(formData: FormData) {
   return { success: true };
 }
 
-export async function submitReview(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    throw new Error("Usuário não autenticado.");
-  }
-
-  const requestId = formData.get("request_id") as string;
-  const providerId = formData.get("provider_id") as string;
-  const rating = Number(formData.get("rating"));
-  const comment = formData.get("comment") as string;
-
-  if (!requestId || !providerId || !rating || rating < 1 || rating > 5) {
-    throw new Error("Dados de avaliação inválidos.");
-  }
-
-  // Insert review
-  const { error: reviewError } = await supabase.from("reviews").insert({
-    request_id: requestId,
-    reviewer_id: user.id,
-    reviewed_provider_id: providerId,
-    overall_rating: rating,
-    comment: comment || null,
-  });
-
-  if (reviewError) {
-    throw new Error(`Erro ao enviar avaliação: ${reviewError.message}`);
-  }
-
-  // Update request status to completed
-  await supabase
-    .from("service_requests")
-    .update({ status: "completed", completed_at: new Date().toISOString() })
-    .eq("id", requestId);
-
-  revalidatePath("/cliente");
-  revalidatePath(`/perfil/${providerId}`);
-  revalidatePath(`/cliente/solicitacao/${requestId}`);
-  
-  return { success: true };
-}

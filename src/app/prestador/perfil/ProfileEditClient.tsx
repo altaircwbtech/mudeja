@@ -117,6 +117,39 @@ export default function ProfileEditClient({ profile, provider }: ProfileEditClie
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5">
+            <div className="space-y-4">
+              <label className="text-sm font-bold flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
+                Como você atua?
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {[
+                  { id: 'driver', label: 'Motorista', icon: '🚚', desc: 'Tenho veículo' },
+                  { id: 'helper', label: 'Ajudante', icon: '🤝', desc: 'Mão de obra' },
+                  { id: 'both', label: 'Ambos', icon: '🚛🤝', desc: 'Tenho tudo' },
+                ].map((item) => (
+                  <label 
+                    key={item.id}
+                    className={`
+                      relative flex flex-col items-center p-4 rounded-2xl border-2 cursor-pointer transition-all hover:bg-slate-50
+                      ${provider?.type === item.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-slate-100 bg-white'}
+                    `}
+                  >
+                    <input 
+                      type="radio" 
+                      name="type" 
+                      value={item.id} 
+                      defaultChecked={provider?.type === item.id}
+                      className="sr-only"
+                    />
+                    <span className="text-2xl mb-1">{item.icon}</span>
+                    <span className="font-bold text-sm">{item.label}</span>
+                    <span className="text-[10px] text-muted-foreground text-center leading-tight">{item.desc}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
@@ -135,7 +168,7 @@ export default function ProfileEditClient({ profile, provider }: ProfileEditClie
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
-                  Nome da Empresa / Nome Fantasia
+                  Nome da Empresa
                 </label>
                 <Input 
                   name="businessName" 

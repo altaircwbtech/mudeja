@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "@/lib/auth-actions";
 import { Logo } from "@/components/brand/Logo";
+import { ProfileSwitcher } from "@/components/profile-switcher";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notification-bell";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import {
   Bell,
   Settings,
   Zap,
+  ArrowRight
 } from "lucide-react";
 
 export default async function PrestadorDashboard() {
@@ -92,6 +94,9 @@ export default async function PrestadorDashboard() {
 
   const hasPhotos = (myPhotos?.length || 0) > 0;
 
+  const isHelper = provider?.type === "helper";
+  const isDriver = provider?.type === "driver" || provider?.type === "both";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -99,10 +104,7 @@ export default async function PrestadorDashboard() {
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="text-xs gap-1 hidden sm:flex">
-              <Truck className="h-3 w-3" />
-              Parceiro
-            </Badge>
+            <ProfileSwitcher isProvider={true} userName={profile.full_name} />
             <NotificationBell />
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="sm">
@@ -115,14 +117,40 @@ export default async function PrestadorDashboard() {
 
       <main className="mx-auto max-w-4xl px-4 py-8">
         {/* Welcome */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">
-            Olá, {profile.full_name?.split(" ")[0]}! 🚚
-          </h1>
-          <p className="text-muted-foreground">
-            Veja as oportunidades na sua região
-          </p>
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 leading-tight">
+              Olá, {profile.full_name?.split(" ")[0]}! {isHelper ? "🤝" : "🚚"}
+            </h1>
+            <p className="text-muted-foreground text-sm font-medium">
+              {isHelper 
+                ? "Sua força de trabalho move a cidade." 
+                : "Seu veículo é o motor do nosso negócio."}
+            </p>
+          </div>
+          
+          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+             <Button variant="ghost" size="sm" className="rounded-lg text-xs font-bold px-4 bg-white shadow-sm">Ver Tudo</Button>
+             <Button variant="ghost" size="sm" className="rounded-lg text-xs font-bold px-4 text-slate-500">Fretes</Button>
+             <Button variant="ghost" size="sm" className="rounded-lg text-xs font-bold px-4 text-slate-500">Mão de Obra</Button>
+          </div>
         </div>
+
+        {/* Action Call for Helpers without Truck */}
+        {isHelper && !hasVehicles && (
+          <Card className="mb-8 border-dashed border-primary/40 bg-primary/5 rounded-2xl overflow-hidden group hover:border-primary transition-colors">
+            <Link href="/prestador/veiculos" className="flex items-center p-4 gap-4">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Zap className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-black text-primary text-sm uppercase tracking-tight">Ganhe mais como Motorista!</p>
+                <p className="text-xs text-slate-600 font-medium">Você já atua como ajudante. Cadastre um veículo para liderar suas próprias mudanças.</p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-primary" />
+            </Link>
+          </Card>
+        )}
 
         {/* Stats */}
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -133,7 +161,7 @@ export default async function PrestadorDashboard() {
             { icon: Zap, label: "Trust Score", value: provider?.trust_score || "0.0" },
           ].map((stat) => {
             const CardWrap = (
-              <Card className={`transition-all ${stat.href ? 'hover:border-primary/50 hover:shadow-md cursor-pointer' : ''}`}>
+              <Card key={stat.label} className={`transition-all ${stat.href ? 'hover:border-primary/50 hover:shadow-md cursor-pointer' : ''}`}>
                 <CardContent className="p-4 text-center">
                   <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
                   <div className="text-xl font-bold">{stat.value}</div>
@@ -253,7 +281,7 @@ export default async function PrestadorDashboard() {
             {[
               { label: "Foto de perfil", done: !!profile.avatar_url, href: "/prestador/perfil" },
               { label: "Verificação de identidade", done: provider?.selfie_verified, href: "/prestador/perfil" },
-              { label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/veiculos" },
+              ...(isDriver ? [{ label: "Veículo cadastrado", done: hasVehicles, href: "/prestador/veiculos" }] : []),
               { label: "Área de atendimento", done: (serviceAreas?.length || 0) > 0, href: "/prestador/perfil" },
               { label: "Fotos de trabalhos", done: hasPhotos, href: "/prestador/perfil" },
             ].map((item) => {

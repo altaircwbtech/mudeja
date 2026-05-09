@@ -61,6 +61,7 @@ export async function updateProfileData(formData: FormData) {
   const businessName = formData.get("businessName") as string;
   const bio = formData.get("bio") as string;
   const phone = formData.get("phone") as string;
+  const type = formData.get("type") as string;
 
   try {
     // Update users table
@@ -79,7 +80,8 @@ export async function updateProfileData(formData: FormData) {
       .from("providers")
       .update({ 
         business_name: businessName,
-        bio: bio
+        bio: bio,
+        type: type
       })
       .eq("user_id", user.id);
 

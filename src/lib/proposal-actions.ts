@@ -40,6 +40,8 @@ export async function submitProposal(formData: FormData) {
   const requestId = formData.get("request_id") as string;
   const amountStr = formData.get("amount") as string;
   const message = formData.get("message") as string;
+  const serviceMode = (formData.get("service_mode") as string) || "full";
+  const teamSize = parseInt(formData.get("team_size") as string || "1");
 
   // Clean the amount string (remove "R$ ", change "," to ".")
   const amountClean = amountStr.replace(/[^\d.,]/g, "").replace(",", ".");
@@ -77,6 +79,8 @@ export async function submitProposal(formData: FormData) {
     provider_id: providerData.id,
     price: amount,
     message,
+    service_mode: serviceMode,
+    team_size: teamSize,
     status: "pending",
   });
 
@@ -94,7 +98,7 @@ export async function submitProposal(formData: FormData) {
       title: "Nova proposta recebida! 🚀",
       message: `${providerName} enviou uma oferta de R$ ${amount.toFixed(2).replace('.', ',')} para a sua solicitação.`,
       type: "proposal_received",
-      actionUrl: `/cliente/solicitacao/${requestId}`,
+      actionUrl: `/cliente/solicitacao/${requestId}/propostas`,
     });
   } catch (err) {
     console.error("Failed to create notification:", err);
@@ -214,4 +218,64 @@ export async function acceptProposal(formData: FormData) {
   revalidatePath(`/cliente/solicitacao/${requestId}`);
   
   // We do not redirect here so the user stays on the page and sees the WhatsApp button appear!
+}
+
+export async function rejectProposal(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Usuário não autenticado");
+  }
+
+  const proposalId = formData.get("proposal_id") as string;
+  const requestId = formData.get("request_id") as string;
+
+  if (!proposalId || !requestId) {
+    throw new Error("Dados inválidos");
+  }
+
+  // Update proposal status to rejected
+  const { error } = await supabase
+    .from("proposals")
+    .update({ 
+      status: "rejected", 
+      rejected_at: new Date().toISOString() 
+    })
+    .eq("id", proposalId);
+
+  // Notify the provider that the proposal was rejected
+  try {
+    const { createNotification } = await import("./notification-actions");
+    const { data: proposal } = await supabase
+      .from("proposals")
+      .select("provider_id, request_id, service_requests(title)")
+      .eq("id", proposalId)
+      .single();
+
+    if (proposal) {
+      const { data: providerUser } = await supabase
+        .from("providers")
+        .select("user_id")
+        .eq("id", proposal.provider_id)
+        .single();
+
+      if (providerUser) {
+        await createNotification({
+          userId: providerUser.user_id,
+          title: "Proposta recusada 😔",
+          message: `Sua proposta para "${(proposal as any).service_requests?.title}" foi recusada pelo cliente.`,
+          type: "proposal_rejected",
+          actionUrl: "/prestador",
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Failed to create rejection notification:", err);
+  }
+
+  revalidatePath(`/cliente/solicitacao/${requestId}/propostas`);
 }

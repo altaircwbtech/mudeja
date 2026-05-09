@@ -78,13 +78,14 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
     .order("created_at", { ascending: false });
 
   // Fallback data if needed
-  const name = provider.business_name || provider.user?.[0]?.full_name;
-  const location = provider.user?.[0]?.city 
-    ? `${provider.user[0].city}, ${provider.user[0].state}`
+  const user = provider.user as any;
+  const name = provider.business_name || user?.full_name;
+  const location = user?.city 
+    ? `${user.city}, ${user.state}`
     : "Localização não informada";
     
-  const memberSince = provider.user?.[0]?.created_at 
-    ? new Date(provider.user[0].created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+  const memberSince = user?.created_at 
+    ? new Date(user.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
     : "";
 
   const isVerified = provider.selfie_verified && provider.document_verified;
@@ -121,8 +122,8 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
             <div className="flex flex-col md:flex-row gap-6 md:items-end">
               <div className="relative shrink-0">
                 <div className="h-28 w-28 md:h-36 md:w-36 rounded-[2rem] border-4 border-background bg-slate-100 flex items-center justify-center overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-                  {provider.user?.[0]?.avatar_url ? (
-                    <img src={provider.user[0].avatar_url} alt={name} className="h-full w-full object-cover" />
+                  {user?.avatar_url ? (
+                    <img src={user.avatar_url} alt={name} className="h-full w-full object-cover" />
                   ) : (
                     <Truck className="h-10 w-10 md:h-16 md:w-16 text-slate-400" />
                   )}
@@ -158,12 +159,23 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <div className="bg-amber-500/10 text-amber-600 rounded-2xl px-4 py-2 flex flex-col items-center border border-amber-500/20">
                   <span className="text-2xl font-black leading-none">{provider.avg_rating || "5.0"}</span>
                   <div className="flex gap-0.5 mt-1">
                     <Star className="h-3 w-3 fill-current" />
                   </div>
+                  <span className="text-[10px] font-bold uppercase mt-1 opacity-60">Avaliação</span>
+                </div>
+
+                <div className="bg-primary/10 text-primary rounded-2xl px-4 py-2 flex flex-col items-center border border-primary/20">
+                  <span className="text-2xl font-black leading-none">
+                    {provider.trust_score ? `${(provider.trust_score * 20).toFixed(0)}%` : "0%"}
+                  </span>
+                  <div className="flex gap-0.5 mt-1">
+                    <ShieldCheck className="h-3 w-3" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase mt-1 opacity-60">Confiança</span>
                 </div>
               </div>
             </div>
@@ -320,7 +332,7 @@ export default async function ProviderProfilePage(props: { params: Promise<{ id:
                   ) : (
                     areas.map(a => (
                       <Badge key={a.id} variant="secondary" className="rounded-lg py-1">
-                        {a.city_name}
+                        {a.city}
                       </Badge>
                     ))
                   )}

@@ -41,23 +41,38 @@ const buttonVariants = cva(
   }
 )
 
+import { Loader2 } from "lucide-react"
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild,
   children,
+  loading,
+  disabled,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { 
+  asChild?: boolean;
+  loading?: boolean;
+}) {
   const isCustomRender = asChild && React.isValidElement(children);
   
   return (
     <ButtonPrimitive
       data-slot="button"
+      disabled={disabled || loading}
       className={cn(buttonVariants({ variant, size, className }))}
       render={isCustomRender ? children : undefined}
       nativeButton={isCustomRender ? false : undefined}
-      {...(isCustomRender ? {} : { children })}
+      {...(isCustomRender ? {} : { 
+        children: (
+          <>
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {children}
+          </>
+        ) 
+      })}
       {...props}
     />
   )

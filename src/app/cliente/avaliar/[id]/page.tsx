@@ -20,7 +20,7 @@ export default async function AvaliarServicoPage(props: { params: Promise<{ id: 
     .from("service_requests")
     .select(`
       *,
-      provider:providers!matched_provider_id (
+      provider:providers!chosen_provider_id (
         id,
         business_name,
         user:users!user_id (full_name, avatar_url)

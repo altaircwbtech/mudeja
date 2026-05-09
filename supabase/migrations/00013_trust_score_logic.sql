@@ -90,5 +90,9 @@ DROP TRIGGER IF EXISTS trg_trust_vehicles ON public.provider_vehicles;
 CREATE TRIGGER trg_trust_vehicles 
 AFTER INSERT OR DELETE ON public.provider_vehicles FOR EACH ROW EXECUTE FUNCTION trigger_recalculate_trust_score();
 
+DROP TRIGGER IF EXISTS trg_trust_reviews ON public.reviews;
+CREATE TRIGGER trg_trust_reviews 
+AFTER INSERT OR DELETE ON public.reviews FOR EACH ROW EXECUTE FUNCTION trigger_recalculate_trust_score();
+
 -- Initial calculation for all providers
 UPDATE public.providers SET trust_score = calculate_trust_score(id);

@@ -63,7 +63,7 @@ export default async function ExplorarPage({
              <Link href="/prestador">
                 <Button variant="ghost" className="hidden sm:flex">Área do Prestador</Button>
              </Link>
-             <Link href="/cliente/solicitar">
+             <Link href="/cliente/nova-solicitacao">
                 <Button className="rounded-full shadow-lg shadow-primary/20">Pedir Orçamento</Button>
              </Link>
           </div>
