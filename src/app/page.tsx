@@ -22,7 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Logo, LogoIcon } from "@/components/brand/Logo";
+import { Logo } from "@/components/brand/Logo";
 import HeroSearchClient from "./HeroSearchClient";
 
 export default async function LandingPage() {
@@ -370,7 +370,7 @@ export default async function LandingPage() {
               <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-orange-500/20 blur-3xl" />
 
               <div className="relative z-10 mx-auto max-w-3xl">
-                <LogoIcon size={64} className="mx-auto mb-8 text-primary" />
+                <Logo size="xl" showText={false} className="mx-auto mb-8 justify-center" />
                 <h2 className="mb-6 text-4xl font-black tracking-tight sm:text-5xl">Pronto para sua nova fase?</h2>
                 <p className="mb-12 text-xl text-zinc-400">
                   Junte-se a milhares de pessoas que mudaram com segurança e economia usando a MovaFácil.
