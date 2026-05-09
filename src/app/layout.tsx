@@ -37,10 +37,22 @@ export const metadata: Metadata = {
     title: "MovaFácil — Sua mudança sem dor de cabeça",
     description:
       "O app que facilita sua mudança. Motoristas flex e ajudantes de confiança perto de você.",
+    images: [
+      {
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'MovaFácil — Sua mudança sem dor de cabeça',
+      },
+    ],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
 };
 
