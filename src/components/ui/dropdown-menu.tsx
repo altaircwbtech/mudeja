@@ -14,8 +14,21 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger({
+  asChild,
+  children,
+  ...props
+}: MenuPrimitive.Trigger.Props & { asChild?: boolean }) {
+  const isCustomRender = asChild && React.isValidElement(children);
+  return (
+    <MenuPrimitive.Trigger
+      data-slot="dropdown-menu-trigger"
+      render={isCustomRender ? (children as React.ReactElement) : undefined}
+      {...props}
+    >
+      {isCustomRender ? undefined : children}
+    </MenuPrimitive.Trigger>
+  )
 }
 
 function DropdownMenuContent({
@@ -104,10 +117,13 @@ function DropdownMenuSubTrigger({
   className,
   inset,
   children,
+  asChild,
   ...props
 }: MenuPrimitive.SubmenuTrigger.Props & {
   inset?: boolean
+  asChild?: boolean
 }) {
+  const isCustomRender = asChild && React.isValidElement(children);
   return (
     <MenuPrimitive.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
@@ -116,9 +132,10 @@ function DropdownMenuSubTrigger({
         "flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:pl-7 data-popup-open:bg-accent data-popup-open:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
+      render={isCustomRender ? (children as React.ReactElement) : undefined}
       {...props}
     >
-      {children}
+      {isCustomRender ? undefined : children}
       <ChevronRightIcon className="ml-auto" />
     </MenuPrimitive.SubmenuTrigger>
   )
