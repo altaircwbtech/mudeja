@@ -17,6 +17,7 @@ import {
   User,
   MapPin,
   Truck,
+  MessageSquare,
 } from "lucide-react";
 
 export default async function ClienteDashboard() {
