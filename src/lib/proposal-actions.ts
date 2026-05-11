@@ -43,6 +43,25 @@ export async function submitProposal(formData: FormData) {
   const serviceMode = (formData.get("service_mode") as string) || "full";
   const teamSize = parseInt(formData.get("team_size") as string || "1");
 
+  // --- MONETIZATION LOGIC START ---
+  const PROPOSAL_COST = 5;
+
+  // Check provider credits
+  const { data: credits, error: creditsError } = await supabase
+    .from("provider_credits")
+    .select("balance")
+    .eq("provider_id", providerData.id)
+    .single();
+
+  if (creditsError || !credits) {
+    throw new Error("Erro ao verificar saldo de créditos. Tente novamente.");
+  }
+
+  if (credits.balance < PROPOSAL_COST) {
+    throw new Error(`Saldo insuficiente. Enviar esta proposta custa ${PROPOSAL_COST} créditos e você possui apenas ${credits.balance}.`);
+  }
+  // --- MONETIZATION LOGIC END ---
+
   // Clean the amount string (remove "R$ ", change "," to ".")
   const amountClean = amountStr.replace(/[^\d.,]/g, "").replace(",", ".");
   const amount = parseFloat(amountClean);
@@ -88,6 +107,23 @@ export async function submitProposal(formData: FormData) {
     console.error("Erro ao enviar proposta:", error);
     throw new Error(`Erro do Supabase: ${error.message} - Detalhes: ${error.details || ''}`);
   }
+
+  // --- MONETIZATION DEBIT START ---
+  // Deduct credits
+  await supabase
+    .from("provider_credits")
+    .update({ balance: credits.balance - PROPOSAL_COST })
+    .eq("provider_id", providerData.id);
+
+  // Record transaction
+  await supabase.from("credit_transactions").insert({
+    provider_id: providerData.id,
+    amount: -PROPOSAL_COST,
+    type: "usage",
+    description: `Envio de proposta para: ${request.title}`,
+    reference_id: requestId
+  });
+  // --- MONETIZATION DEBIT END ---
 
   // Create notification for the client
   try {

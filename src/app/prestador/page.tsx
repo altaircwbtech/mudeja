@@ -18,7 +18,8 @@ import {
   Bell,
   Settings,
   Zap,
-  ArrowRight
+  ArrowRight,
+  Coins
 } from "lucide-react";
 
 export default async function PrestadorDashboard() {
@@ -97,6 +98,13 @@ export default async function PrestadorDashboard() {
   const isHelper = provider?.type === "helper";
   const isDriver = provider?.type === "driver" || provider?.type === "both";
 
+  // Fetch provider credits
+  const { data: credits } = await supabase
+    .from("provider_credits")
+    .select("balance")
+    .eq("provider_id", provider?.id)
+    .single();
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -157,7 +165,7 @@ export default async function PrestadorDashboard() {
           {[
             { icon: ClipboardList, label: "Propostas", value: myProposals?.length || 0, href: "/prestador/propostas" },
             { icon: Star, label: "Avaliação", value: provider?.avg_rating || "—", href: "/prestador/avaliacoes" },
-            { icon: TrendingUp, label: "Taxa resp.", value: `${provider?.response_rate || 0}%` },
+            { icon: Coins, label: "MovaCredits", value: credits?.balance ?? 0, href: "/prestador/creditos" },
             { icon: Zap, label: "Trust Score", value: provider?.trust_score || "0.0" },
           ].map((stat) => {
             const CardWrap = (

@@ -11,11 +11,14 @@
 - `proposals`: Propostas enviadas por prestadores.
 - `notifications`: Sistema real-time de alertas.
 - `reviews`: Avaliações e notas (impactam o Trust Score).
+- `provider_credits`: Saldo de créditos dos prestadores (`provider_id`, `balance`).
+- `credit_transactions`: Extrato de movimentação (`amount`, `type: purchase | usage`, `description`).
 
 ## ⚖️ Regras Comportamentais
 1. **Confiança Primeiro:** Nenhum prestador sem Trust Score aparece em destaque.
 2. **Match Determinístico:** Uma proposta aceita bloqueia novas propostas para aquele pedido.
 3. **Comunicação Direta:** O WhatsApp é o canal de "Handshake" final entre as partes.
+4. **Pay-per-Lead:** O acesso ao "Handshake" exige saldo positivo de créditos.
 
 ## 📊 JSON Data Schemas (Payloads)
 ### 1. Service Request (Input)
@@ -25,7 +28,18 @@
   "destination": "string (address)",
   "items": "array (objects)",
   "date": "ISO-8601",
-  "service_mode": "standard | premium"
+  "service_mode": "standard | premium",
+  "credit_cost": "number (calculated by complexity)"
+}
+```
+
+### 2. Credit Purchase (Input)
+```json
+{
+  "provider_id": "uuid",
+  "package_id": "string",
+  "amount_paid": "number",
+  "credits_added": "number"
 }
 ```
 
