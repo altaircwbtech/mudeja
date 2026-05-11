@@ -79,6 +79,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`}>
+        <div className="noise-overlay" />
         <Providers>{children}</Providers>
         <Toaster />
         <Suspense fallback={null}>
