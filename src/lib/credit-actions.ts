@@ -49,7 +49,7 @@ export async function getCreditTransactions() {
     .from("credit_transactions")
     .select("*")
     .eq("provider_id", provider.id)
-    .orderBy("created_at", { ascending: false });
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching transactions:", error);
